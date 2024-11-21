@@ -47,7 +47,7 @@ const agentSchema: Schema<IAgent> = new Schema<IAgent>({
   },
   create_date: {
     type: Date,
-    required: false,
+    default: Date.now,
   },
 });
 
