@@ -17,6 +17,7 @@ app.use(express.json());
 import agentRouter from './routes/agent';
 
 app.use('/api/v1/agents', agentRouter);
+app.use('/api/v1/test', agentRouter);
 
 
 app.listen(port, () => {
