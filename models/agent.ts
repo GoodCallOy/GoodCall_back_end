@@ -51,6 +51,6 @@ const agentSchema: Schema<IAgent> = new Schema<IAgent>({
   },
 });
 
-const Agent: Model<IAgent> = mongoose.model<IAgent>('Job', agentSchema);
+const Agent: Model<IAgent> = mongoose.model<IAgent>('Agent', agentSchema);
 
 export default Agent;

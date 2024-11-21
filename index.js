@@ -11,6 +11,8 @@ const dbConnection_1 = __importDefault(require("./db/dbConnection"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+const agent_1 = __importDefault(require("./routes/agent"));
+app.use('/api/v1/agents', agent_1.default);
 app.listen(serverConfig_json_1.port, () => {
     console.log(`Server is listening on port ${serverConfig_json_1.port}...`);
 });

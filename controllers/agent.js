@@ -8,9 +8,9 @@ const agent_1 = __importDefault(require("../models/agent"));
 const getAllAgents = async (req, res) => {
     try {
         console.log("getting all agents");
-        const allJobs = await agent_1.default.find();
-        console.log("all agents found");
-        res.status(200).json(allJobs);
+        const allAgents = await agent_1.default.find();
+        console.log("all agents found", allAgents);
+        res.status(200).json(allAgents);
     }
     catch (err) {
         res.status(400).json({
@@ -24,11 +24,12 @@ exports.getAllAgents = getAllAgents;
 const getAgentById = async (req, res) => {
     const agentId = req.params.id;
     try {
-        const job = await agent_1.default.findById(agentId);
-        if (!job) {
+        console.log("getting agent by id", agentId);
+        const agent = await agent_1.default.findById(agentId);
+        if (!agent) {
             return res.status(404).json({ error: 'agentId not found' });
         }
-        res.status(200).json(job);
+        res.status(200).json(agent);
     }
     catch (error) {
         console.error(error);

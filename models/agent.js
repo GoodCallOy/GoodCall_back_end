@@ -62,5 +62,5 @@ const agentSchema = new mongoose_1.Schema({
         required: false,
     },
 });
-const Agent = mongoose_1.default.model('Job', agentSchema);
+const Agent = mongoose_1.default.model('Agent', agentSchema);
 exports.default = Agent;

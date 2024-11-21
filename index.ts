@@ -14,6 +14,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+import agentRouter from './routes/agent';
+
+app.use('/api/v1/agents', agentRouter);
+
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}...`);
 });
