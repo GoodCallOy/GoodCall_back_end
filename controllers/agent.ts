@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import Agent from "../models/agent";
-import { IAgent } from "../models/agent";
+import IAgent from "../types/IAgent";
 export const getAllAgents = async (req: Request, res: Response) => {
   try {
     console.log("getting all agents");
-    const allJobs = await Agent.find();
-    console.log("all agents found");
+    const allAgents = await Agent.find();
+    console.log("all agents found", allAgents);
 
-    res.status(200).json(allJobs);
+    res.status(200).json(allAgents);
   } catch (err: any) {
     res.status(400).json({
       status: 400,
@@ -21,11 +21,12 @@ export const getAgentById = async (req: Request, res: Response) => {
   const agentId = req.params.id;
 
   try {
-    const job: IAgent | null = await Agent.findById(agentId);
-    if (!job) {
+    console.log("getting agent by id", agentId);
+    const agent: IAgent | null = await Agent.findById(agentId);
+    if (!agent) {
       return res.status(404).json({ error: 'agentId not found' });
     }
-    res.status(200).json(job);
+    res.status(200).json(agent);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

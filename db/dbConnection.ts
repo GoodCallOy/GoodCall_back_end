@@ -12,7 +12,7 @@ const options = {
 
 const connectDB = async (): Promise<void> => {
   try {
-    await mongoose.connect(`${process.env.MONGO_URI}`, options);
+    await mongoose.connect(`${process.env.MONGO1_URI}`, options);
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error('Failed to connect to MongoDB', error);
