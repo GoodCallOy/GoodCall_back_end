@@ -17,7 +17,7 @@ app.use(express.json());
 import agentRouter from './routes/agent';
 import caseRouter from './routes/cases';
 
-app.use('/api/v1/agents', agentRouter);
+app.use('/api/v1/agent', agentRouter);
 app.use('/api/v1/cases', caseRouter);
 
 
