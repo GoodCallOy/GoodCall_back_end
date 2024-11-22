@@ -35,27 +35,31 @@ export const getAgentById = async (req: Request, res: Response) => {
 
 export const addAgent = async (req: Request, res: Response) => {
   try {
-    const newJob = new Agent({
-      company: req.body.company,
-      companyWebSite: req.body.companyWebSite,
-      applicationLink: req.body.applicationLink,
-      Position: req.body.Position,
-      jobDescription: req.body.jobDescription,
-      dateApplied: req.body.dateApplied,
-      response: req.body.response,
-      reasonToWork: req.body.reasonToWork,
-      recruiterName: req.body.recruiterName,
-      recruiterPosition: req.body.recruiterPosition,
-      applied: req.body.applied,
-   });
+    console.log("agent object:", req.body);
 
-    if (await newJob.save()) {
-      res.status(200).json({
-        status: 200,
-        message: "Agent saved successfully" + newJob,
-      });
-    } 
+    // Create a new agent using the data from the request body
+    const newAgent = new Agent({
+      name: req.body.name,
+      meetings: req.body.meetings,
+      call_time: req.body.call_time,
+      calls_made: req.body.calls_made,
+      outgoing_calls: req.body.outgoing_calls,
+      answered_calls: req.body.answered_calls,
+      response_rate: req.body.response_rate,
+      case: req.body.case,
+      create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
+    });
+
+    // Save the new agent to the database
+    await newAgent.save();
+
+    res.status(200).json({
+      status: 200,
+      message: "Agent saved successfully",
+      agent: newAgent,
+    });
   } catch (err: any) {
+    console.error("Error adding agent:", err.message);
     res.status(400).json({
       status: 400,
       message: err.message,
