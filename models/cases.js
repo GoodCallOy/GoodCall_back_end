@@ -24,37 +24,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const agentSchema = new mongoose_1.Schema({
+const casesSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
     },
-    meetings: {
+    billing: {
         type: Number,
-        required: false,
-    },
-    call_time: {
-        type: Number,
-        required: true,
-    },
-    calls_made: {
-        type: Number,
-        required: true,
-    },
-    outgoing_calls: {
-        type: Number,
-        required: true,
-    },
-    answered_calls: {
-        type: Number,
-        required: false,
-    },
-    response_rate: {
-        type: Number,
-        required: false,
-    },
-    case: {
-        type: String,
         required: false,
     },
     create_date: {
@@ -62,5 +38,5 @@ const agentSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-const Agent = mongoose_1.default.model('Agent', agentSchema);
-exports.default = Agent;
+const Cases = mongoose_1.default.model('Cases', casesSchema);
+exports.default = Cases;
