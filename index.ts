@@ -15,8 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 import agentRouter from './routes/agent';
+import caseRouter from './routes/cases';
 
 app.use('/api/v1/agents', agentRouter);
+app.use('/api/v1/cases', caseRouter);
 
 
 app.listen(port, () => {
