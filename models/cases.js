@@ -33,6 +33,10 @@ const casesSchema = new mongoose_1.Schema({
         type: Number,
         required: false,
     },
+    state: {
+        type: String,
+        required: true,
+    },
     create_date: {
         type: Date,
         default: Date.now,

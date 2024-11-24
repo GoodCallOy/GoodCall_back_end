@@ -38,7 +38,9 @@ export const addCase = async (req: Request, res: Response) => {
     const newCase = new Cases({
       name: req.body.name,
       billing: req.body.billing,
+      state: req.body.state,
    });
+   console.log('newCase', newCase);
 
     if (await newCase.save()) {
       res.status(200).json({

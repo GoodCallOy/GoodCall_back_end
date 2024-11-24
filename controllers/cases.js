@@ -42,7 +42,9 @@ const addCase = async (req, res) => {
         const newCase = new cases_1.default({
             name: req.body.name,
             billing: req.body.billing,
+            state: req.body.state,
         });
+        console.log('newCase', newCase);
         if (await newCase.save()) {
             res.status(200).json({
                 status: 200,
