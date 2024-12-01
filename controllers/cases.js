@@ -9,7 +9,7 @@ const getAllCases = async (req, res) => {
     try {
         console.log("getting all Cases");
         const allCases = await cases_1.default.find();
-        console.log("all agents found", allCases);
+        console.log("all cases found", allCases);
         res.status(200).json(allCases);
     }
     catch (err) {
@@ -24,10 +24,10 @@ exports.getAllCases = getAllCases;
 const getCaseById = async (req, res) => {
     const CaseId = req.params.id;
     try {
-        console.log("getting agent by id", CaseId);
+        console.log("getting case by id", CaseId);
         const Case = await cases_1.default.findById(CaseId);
         if (!Case) {
-            return res.status(404).json({ error: 'agentId not found' });
+            return res.status(404).json({ error: 'caseId not found' });
         }
         res.status(200).json(Case);
     }
@@ -43,12 +43,13 @@ const addCase = async (req, res) => {
             name: req.body.name,
             billing: req.body.billing,
             state: req.body.state,
+            type: req.body.type,
         });
         console.log('newCase', newCase);
         if (await newCase.save()) {
             res.status(200).json({
                 status: 200,
-                message: "Agent saved successfully" + newCase,
+                message: "Case saved successfully" + newCase,
             });
         }
     }
@@ -65,10 +66,10 @@ const modifyCase = async (req, res) => {
     const updatedCaseData = req.body;
     try {
         const modifiedCase = await cases_1.default.findByIdAndUpdate(CaseId, updatedCaseData, { new: true });
-        res.status(200).json({ message: 'agent modified successfully.', modifiedCase });
+        res.status(200).json({ message: 'Case modified successfully.', modifiedCase });
     }
     catch (error) {
-        console.error('Error modifying agent:', error);
+        console.error('Error modifying case:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -77,10 +78,10 @@ const deleteCase = async (req, res) => {
     const CaseId = req.params.id;
     try {
         await cases_1.default.findByIdAndDelete(CaseId);
-        res.status(200).json({ message: 'Agent deleted successfully.' });
+        res.status(200).json({ message: 'Case deleted successfully.' });
     }
     catch (error) {
-        console.error('Error deleting agent:', error);
+        console.error('Error deleting case:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };

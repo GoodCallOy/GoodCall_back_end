@@ -37,6 +37,10 @@ const casesSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    type: {
+        type: String,
+        required: true,
+    },
     create_date: {
         type: Date,
         default: Date.now,
