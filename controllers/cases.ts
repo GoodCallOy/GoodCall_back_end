@@ -5,7 +5,7 @@ export const getAllCases = async (req: Request, res: Response) => {
   try {
     console.log("getting all Cases");
     const allCases = await Cases.find();
-    console.log("all agents found", allCases);
+    console.log("all cases found", allCases);
 
     res.status(200).json(allCases);
   } catch (err: any) {
@@ -21,10 +21,10 @@ export const getCaseById = async (req: Request, res: Response) => {
   const CaseId = req.params.id;
 
   try {
-    console.log("getting agent by id", CaseId);
+    console.log("getting case by id", CaseId);
     const Case: ICases | null = await Cases.findById(CaseId);
     if (!Case) {
-      return res.status(404).json({ error: 'agentId not found' });
+      return res.status(404).json({ error: 'caseId not found' });
     }
     res.status(200).json(Case);
   } catch (error) {
