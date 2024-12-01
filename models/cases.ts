@@ -4,6 +4,7 @@ export interface Icases extends Document {
     name: string;
     billing: number;
     state: string;
+    type: string;
     create_date: Date;
 }
 
@@ -17,6 +18,10 @@ const casesSchema: Schema<Icases> = new Schema<Icases>({
     required: false,
   },
   state: {
+    type: String,
+    required: true,
+  },
+  type: {
     type: String,
     required: true,
   },

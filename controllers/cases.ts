@@ -39,13 +39,14 @@ export const addCase = async (req: Request, res: Response) => {
       name: req.body.name,
       billing: req.body.billing,
       state: req.body.state,
+      type: req.body.type,
    });
    console.log('newCase', newCase);
 
     if (await newCase.save()) {
       res.status(200).json({
         status: 200,
-        message: "Agent saved successfully" + newCase,
+        message: "Case saved successfully" + newCase,
       });
     } 
   } catch (err: any) {
@@ -62,9 +63,9 @@ export const modifyCase = async (req: Request, res: Response) => {
 
   try {
     const modifiedCase = await Cases.findByIdAndUpdate(CaseId, updatedCaseData, { new: true });
-    res.status(200).json({ message: 'agent modified successfully.', modifiedCase });
+    res.status(200).json({ message: 'Case modified successfully.', modifiedCase });
   } catch (error) {
-    console.error('Error modifying agent:', error);
+    console.error('Error modifying case:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -74,9 +75,9 @@ export const deleteCase = async (req: Request, res: Response) => {
 
   try {
     await Cases.findByIdAndDelete(CaseId);
-    res.status(200).json({ message: 'Agent deleted successfully.' });
+    res.status(200).json({ message: 'Case deleted successfully.' });
   } catch (error) {
-    console.error('Error deleting agent:', error);
+    console.error('Error deleting case:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
