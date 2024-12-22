@@ -62,5 +62,5 @@ const agentStatsSchema = new mongoose_1.Schema({
         default: Date.now,
     },
 });
-const Agent = mongoose_1.default.model('Agent', agentStatsSchema);
-exports.default = Agent;
+const AgentStats = mongoose_1.default.model('AgentStats', agentStatsSchema);
+exports.default = AgentStats;
