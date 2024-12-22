@@ -51,6 +51,6 @@ const agentStatsSchema: Schema<IAgentStats> = new Schema<IAgentStats>({
   },
 });
 
-const Agent: Model<IAgentStats> = mongoose.model<IAgentStats>('Agent', agentStatsSchema);
+const AgentStats: Model<IAgentStats> = mongoose.model<IAgentStats>('AgentStats', agentStatsSchema);
 
-export default Agent;
+export default AgentStats;
