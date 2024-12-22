@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Agent from "../models/agent";
-import IAgent from "../types/IAgent";
-export const getAllAgents = async (req: Request, res: Response) => {
+import Agent from "../models/agentStats";
+import IAgent from "../types/IAgentStats";
+export const getAllAgentStats = async (req: Request, res: Response) => {
   try {
     console.log("getting all agents");
     const allAgents = await Agent.find();
@@ -17,7 +17,7 @@ export const getAllAgents = async (req: Request, res: Response) => {
 };
 
 // Get a single job by ID
-export const getAgentById = async (req: Request, res: Response) => {
+export const getAgentStatsById = async (req: Request, res: Response) => {
   const agentId = req.params.id;
 
   try {
@@ -33,7 +33,7 @@ export const getAgentById = async (req: Request, res: Response) => {
   }
 };
 
-export const addAgent = async (req: Request, res: Response) => {
+export const addAgentStats = async (req: Request, res: Response) => {
   try {
     console.log("agent object:", req.body);
 
@@ -67,7 +67,7 @@ export const addAgent = async (req: Request, res: Response) => {
   }
 };
 
-export const modifyAgent = async (req: Request, res: Response) => {
+export const modifyAgentStats = async (req: Request, res: Response) => {
   const agentId = req.params.id;
   const updatedAgentData: Partial<IAgent> = req.body;
 
@@ -80,7 +80,7 @@ export const modifyAgent = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteAgent = async (req: Request, res: Response) => {
+export const deleteAgentStats = async (req: Request, res: Response) => {
   const agentId = req.params.id;
 
   try {

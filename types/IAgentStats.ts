@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 
-interface IAgent extends Document {
+interface IAgentStats extends Document {
     name: string;
     meetings: number;
     call_time: number;
@@ -12,4 +12,4 @@ interface IAgent extends Document {
     create_date: Date;
 }
 
-export default IAgent;
+export default IAgentStats;

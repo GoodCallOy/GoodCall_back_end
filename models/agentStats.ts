@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema  } from 'mongoose';
 
-export interface IAgent extends Document {
+export interface IAgentStats extends Document {
     name: string;
     meetings: number;
     call_time: number;
@@ -12,7 +12,7 @@ export interface IAgent extends Document {
     create_date: Date;
 }
 
-const agentSchema: Schema<IAgent> = new Schema<IAgent>({
+const agentStatsSchema: Schema<IAgentStats> = new Schema<IAgentStats>({
     name: {
     type: String,
     required: true,
@@ -51,6 +51,6 @@ const agentSchema: Schema<IAgent> = new Schema<IAgent>({
   },
 });
 
-const Agent: Model<IAgent> = mongoose.model<IAgent>('Agent', agentSchema);
+const Agent: Model<IAgentStats> = mongoose.model<IAgentStats>('Agent', agentStatsSchema);
 
 export default Agent;
