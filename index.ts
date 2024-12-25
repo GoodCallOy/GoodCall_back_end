@@ -14,10 +14,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-import agentStatsRouter from './routes/agentStats';
 import caseRouter from './routes/cases';
+import agentStatsRouter from './routes/agentStats';
+import agentRouter from './routes/agent';
 
 app.use('/api/v1/agentStats', agentStatsRouter);
+app.use('/api/v1/agent', agentRouter);
 app.use('/api/v1/cases', caseRouter);
 
 
