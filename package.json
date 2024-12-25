@@ -11,8 +11,9 @@
         "mongoose": "^7.2.2"
     },
     "scripts": {
+        "start": "node index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "babel src -d dist"
+        "build": "babel . --out-dir dist --ignore node_modules,dist"
     },
     "devDependencies": {
         "@babel/cli": "^7.26.4",
