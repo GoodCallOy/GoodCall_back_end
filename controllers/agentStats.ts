@@ -35,7 +35,7 @@ export const getAgentStatsById = async (req: Request, res: Response) => {
 
 export const addAgentStats = async (req: Request, res: Response) => {
   try {
-    console.log("agent object in the backend:", req.body);
+    console.log("req.body:", req.body);
 
     // Create a new agent using the data from the request body
     const newAgent = new AgentStats({
@@ -47,7 +47,7 @@ export const addAgentStats = async (req: Request, res: Response) => {
       answered_calls: req.body.answered_calls,
       response_rate: req.body.response_rate,
       case: req.body.case,
-      callingdate: req.body.callingDate,
+      calling_date: req.body.calling_date,
       create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
     });
 
