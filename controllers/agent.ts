@@ -40,7 +40,7 @@ export const addAgent = async (req: Request, res: Response) => {
     // Create a new agent using the data from the request body
     const newAgent = new Agent({
       name: req.body.name,
-      cases: req.body.cases,
+      cases: req.body.case,
       position: req.body.position,
       create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
     });

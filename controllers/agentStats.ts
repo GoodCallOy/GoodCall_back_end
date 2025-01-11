@@ -47,6 +47,7 @@ export const addAgentStats = async (req: Request, res: Response) => {
       answered_calls: req.body.answered_calls,
       response_rate: req.body.response_rate,
       case: req.body.case,
+      callingdate: req.body.callingdate,
       create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
     });
 
