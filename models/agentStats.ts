@@ -9,7 +9,7 @@ export interface IAgentStats extends Document {
     answered_calls: number;
     response_rate: number;
     case: string;
-    callingDate: Date;
+    calling_date: Date;
     create_date: Date;
 }
 
@@ -46,9 +46,10 @@ const agentStatsSchema: Schema<IAgentStats> = new Schema<IAgentStats>({
     type: String,
     required: false,
   },
-  callingDate: {
+  calling_date: {
     type: Date,
-    default: Date.now,
+    required: false,
+
   },
   create_date: {
     type: Date,
