@@ -12,8 +12,8 @@
     },
     "scripts": {
         "start": "node index.js",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "npx babel . --out-dir dist --ignore node_modules,dist"
+        "build": "npx babel src --out-dir dist --ignore node_modules,dist",
+        "prestart": "npm run build"
     },
     "devDependencies": {
         "@babel/cli": "^7.26.4",

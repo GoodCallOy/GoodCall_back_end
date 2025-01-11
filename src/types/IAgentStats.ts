@@ -9,6 +9,7 @@ interface IAgentStats extends Document {
     answered_calls: number;
     response_rate: number;
     case: string;
+    calling_date: Date;
     create_date: Date;
 }
 

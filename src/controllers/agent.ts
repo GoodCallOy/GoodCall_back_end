@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import AgentStats from "../models/agentStats";
+import Agent from "../routes/models/agent";
 import IAgent from "../types/IAgentStats";
-export const getAllAgentStats = async (req: Request, res: Response) => {
+export const getAllAgents = async (req: Request, res: Response) => {
   try {
     console.log("getting all agents");
-    const allAgents = await AgentStats.find();
+    const allAgents = await Agent.find();
     console.log("all agents found", allAgents);
 
     res.status(200).json(allAgents);
@@ -17,12 +17,12 @@ export const getAllAgentStats = async (req: Request, res: Response) => {
 };
 
 // Get a single job by ID
-export const getAgentStatsById = async (req: Request, res: Response) => {
+export const getAgentById = async (req: Request, res: Response) => {
   const agentId = req.params.id;
 
   try {
     console.log("getting agent by id", agentId);
-    const agent: IAgent | null = await AgentStats.findById(agentId);
+    const agent: IAgent | null = await Agent.findById(agentId);
     if (!agent) {
       return res.status(404).json({ error: 'agentId not found' });
     }
@@ -33,21 +33,15 @@ export const getAgentStatsById = async (req: Request, res: Response) => {
   }
 };
 
-export const addAgentStats = async (req: Request, res: Response) => {
+export const addAgent = async (req: Request, res: Response) => {
   try {
-    console.log("req.body:", req.body);
+    console.log("agent object:", req.body);
 
     // Create a new agent using the data from the request body
-    const newAgent = new AgentStats({
+    const newAgent = new Agent({
       name: req.body.name,
-      meetings: req.body.meetings,
-      call_time: req.body.call_time,
-      calls_made: req.body.calls_made,
-      outgoing_calls: req.body.outgoing_calls,
-      answered_calls: req.body.answered_calls,
-      response_rate: req.body.response_rate,
-      case: req.body.case,
-      calling_date: req.body.calling_date,
+      cases: req.body.case,
+      position: req.body.position,
       create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
     });
 
@@ -68,12 +62,12 @@ export const addAgentStats = async (req: Request, res: Response) => {
   }
 };
 
-export const modifyAgentStats = async (req: Request, res: Response) => {
+export const modifyAgent = async (req: Request, res: Response) => {
   const agentId = req.params.id;
   const updatedAgentData: Partial<IAgent> = req.body;
 
   try {
-    const modifiedAgent = await AgentStats.findByIdAndUpdate(agentId, updatedAgentData, { new: true });
+    const modifiedAgent = await Agent.findByIdAndUpdate(agentId, updatedAgentData, { new: true });
     res.status(200).json({ message: 'agent modified successfully.', modifiedAgent });
   } catch (error) {
     console.error('Error modifying agent:', error);
@@ -81,11 +75,11 @@ export const modifyAgentStats = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteAgentStats = async (req: Request, res: Response) => {
+export const deleteAgent = async (req: Request, res: Response) => {
   const agentId = req.params.id;
 
   try {
-    await AgentStats.findByIdAndDelete(agentId);
+    await Agent.findByIdAndDelete(agentId);
     res.status(200).json({ message: 'Agent deleted successfully.' });
   } catch (error) {
     console.error('Error deleting agent:', error);
