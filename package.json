@@ -12,8 +12,7 @@
     },
     "scripts": {
         "start": "node index.js",
-        "prebuild": "echo 'NODE_ENV: $NODE_ENV' && echo 'Current directory: $(pwd)' && ls -al",
-        "build": "npx babel src -d dist"
+        "build": "npx babel src --out-dir dist --ignore node_modules,dist"
     },
     "devDependencies": {
         "@babel/cli": "^7.26.4",
@@ -24,7 +23,7 @@
         "typescript": "^5.6.3"
     },
     "engines": {
-    "node": "16.x",
-    "npm": "7.x"
+        "node": "21.x",
+        "npm": "7.x"
     }
 }

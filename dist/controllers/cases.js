@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.deleteCase = exports.modifyCase = exports.addCase = exports.getCaseById = exports.getAllCases = void 0;
-const cases_1 = __importDefault(require("../models/cases"));
+const cases_1 = __importDefault(require("../routes/models/cases"));
 const getAllCases = async (req, res) => {
   try {
     console.log("getting all Cases");
