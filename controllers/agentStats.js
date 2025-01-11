@@ -50,7 +50,7 @@ const addAgentStats = async (req, res) => {
             answered_calls: req.body.answered_calls,
             response_rate: req.body.response_rate,
             case: req.body.case,
-            callingdate: req.body.callingdate,
+            callingdate: req.body.callingDate,
             create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
         });
         // Save the new agent to the database
