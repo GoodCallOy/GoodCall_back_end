@@ -1,12 +1,12 @@
 "use strict";
 
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+var __createBinding = void 0 && (void 0).__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   var desc = Object.getOwnPropertyDescriptor(m, k);
   if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
     desc = {
       enumerable: true,
-      get: function () {
+      get: function get() {
         return m[k];
       }
     };
@@ -16,7 +16,7 @@ var __createBinding = this && this.__createBinding || (Object.create ? function 
   if (k2 === undefined) k2 = k;
   o[k2] = m[k];
 });
-var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+var __setModuleDefault = void 0 && (void 0).__setModuleDefault || (Object.create ? function (o, v) {
   Object.defineProperty(o, "default", {
     enumerable: true,
     value: v
@@ -24,7 +24,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 } : function (o, v) {
   o["default"] = v;
 });
-var __importStar = this && this.__importStar || function (mod) {
+var __importStar = void 0 && (void 0).__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
   if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -34,8 +34,8 @@ var __importStar = this && this.__importStar || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-const mongoose_1 = __importStar(require("mongoose"));
-const casesSchema = new mongoose_1.Schema({
+var mongoose_1 = __importStar(require("mongoose"));
+var casesSchema = new mongoose_1.Schema({
   name: {
     type: String,
     required: true
@@ -54,8 +54,8 @@ const casesSchema = new mongoose_1.Schema({
   },
   create_date: {
     type: Date,
-    default: Date.now
+    "default": Date.now
   }
 });
-const Cases = mongoose_1.default.model('Cases', casesSchema);
-exports.default = Cases;
+var Cases = mongoose_1["default"].model('Cases', casesSchema);
+exports["default"] = Cases;
