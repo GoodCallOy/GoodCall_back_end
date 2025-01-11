@@ -39,7 +39,7 @@ const getAgentStatsById = async (req, res) => {
 exports.getAgentStatsById = getAgentStatsById;
 const addAgentStats = async (req, res) => {
     try {
-        console.log("agent object:", req.body);
+        console.log("req.body:", req.body);
         // Create a new agent using the data from the request body
         const newAgent = new agentStats_1.default({
             name: req.body.name,
@@ -50,7 +50,7 @@ const addAgentStats = async (req, res) => {
             answered_calls: req.body.answered_calls,
             response_rate: req.body.response_rate,
             case: req.body.case,
-            callingdate: req.body.callingDate,
+            calling_date: req.body.calling_date,
             create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
         });
         // Save the new agent to the database
