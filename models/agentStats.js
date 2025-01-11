@@ -57,6 +57,10 @@ const agentStatsSchema = new mongoose_1.Schema({
         type: String,
         required: false,
     },
+    callingDate: {
+        type: Date,
+        default: Date.now,
+    },
     create_date: {
         type: Date,
         default: Date.now,
