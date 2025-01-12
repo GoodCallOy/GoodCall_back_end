@@ -49,8 +49,8 @@ export const addAgentStats = async (req: Request, res: Response) => {
       case: req.body.case,
       create_date: req.body.create_date,
       calling_date: {
-        start: req.body.callingDate.start,
-        end: req.body.callingDate.end,
+        start: req.body.calling_date.start,
+        end: req.body.calling_date.end,
       },   
     });
 
