@@ -58,8 +58,8 @@ const agentStatsSchema = new mongoose_1.Schema({
         required: false,
     },
     calling_date: {
-        type: Date,
-        required: false,
+        start: { type: Date, required: true },
+        end: { type: Date, required: true },
     },
     create_date: {
         type: Date,
