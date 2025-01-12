@@ -47,8 +47,11 @@ export const addAgentStats = async (req: Request, res: Response) => {
       answered_calls: req.body.answered_calls,
       response_rate: req.body.response_rate,
       case: req.body.case,
-      calling_date: req.body.calling_date,
-      create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
+      create_date: req.body.create_date,
+      calling_date: {
+        start: req.body.callingDate.start,
+        end: req.body.callingDate.end,
+      },   
     });
 
     // Save the new agent to the database
