@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import AgentStats from "../routes/models/agentStats";
+import AgentStats from "../models/agentStats";
 import IAgent from "../types/IAgentStats";
 export const getAllAgentStats = async (req: Request, res: Response) => {
   try {

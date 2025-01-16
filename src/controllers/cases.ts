@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Cases from "../routes/models/cases";
+import Cases from "../models/cases";
 import ICases from "../types/ICases";
 export const getAllCases = async (req: Request, res: Response) => {
   try {
