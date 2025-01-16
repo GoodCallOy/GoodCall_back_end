@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAgent = exports.modifyAgent = exports.addAgent = exports.getAgentById = exports.getAllAgents = void 0;
-const agent_1 = __importDefault(require("../routes/models/agent"));
+const agent_1 = __importDefault(require("../models/agent"));
 const getAllAgents = async (req, res) => {
     try {
         console.log("getting all agents");
