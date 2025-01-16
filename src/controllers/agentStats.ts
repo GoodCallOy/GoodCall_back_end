@@ -35,6 +35,7 @@ export const getAgentStatsById = async (req: Request, res: Response) => {
 
 export const addAgentStats = async (req: Request, res: Response) => {
   try {
+    
     console.log("req.body:", req.body);
 
     // Create a new agent using the data from the request body
