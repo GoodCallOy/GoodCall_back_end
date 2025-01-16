@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Agent from "../models/agent";
-import IAgent from "../types/IAgentStats";
+import Agent from "../src/models/agent";
+import IAgent from "../src/types/IAgent";
 export const getAllAgents = async (req: Request, res: Response) => {
   try {
     console.log("getting all agents");
@@ -40,8 +40,13 @@ export const addAgent = async (req: Request, res: Response) => {
     // Create a new agent using the data from the request body
     const newAgent = new Agent({
       name: req.body.name,
-      cases: req.body.case,
-      position: req.body.position,
+      meetings: req.body.meetings,
+      call_time: req.body.call_time,
+      calls_made: req.body.calls_made,
+      outgoing_calls: req.body.outgoing_calls,
+      answered_calls: req.body.answered_calls,
+      response_rate: req.body.response_rate,
+      case: req.body.case,
       create_date: req.body.create_date, // Optional, defaults to Date.now if not provided
     });
 
