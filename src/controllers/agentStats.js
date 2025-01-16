@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAgentStats = exports.modifyAgentStats = exports.addAgentStats = exports.getAgentStatsById = exports.getAllAgentStats = void 0;
-const agentStats_1 = __importDefault(require("../routes/models/agentStats"));
+const agentStats_1 = __importDefault(require("../src/models/agentStats"));
 const getAllAgentStats = async (req, res) => {
     try {
         console.log("getting all agents");
