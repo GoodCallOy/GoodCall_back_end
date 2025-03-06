@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 
 require('dotenv').config();
 
+console.log('Database uri:', `${process.env.MONGO1_URI}`);
+console.log('Database user:', `${process.env.MONGO_USER}`);
+
 const options = {
   authSource: 'admin',
   user: `${process.env.MONGO_USER}`,
@@ -14,6 +17,7 @@ const connectDB = async (): Promise<void> => {
   try {
     await mongoose.connect(`${process.env.MONGO1_URI}`, options);
     console.log('Connected to MongoDB');
+   
   } catch (error) {
     console.error('Failed to connect to MongoDB', error);
   }

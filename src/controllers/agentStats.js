@@ -7,7 +7,7 @@ exports.deleteAgentStats = exports.modifyAgentStats = exports.addAgentStats = ex
 const agentStats_1 = __importDefault(require("../models/agentStats"));
 const getAllAgentStats = async (req, res) => {
     try {
-        console.log("getting all agents");
+        console.log("getting all agentstats");
         const allAgents = await agentStats_1.default.find();
         console.log("all agents found", allAgents);
         res.status(200).json(allAgents);
