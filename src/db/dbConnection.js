@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 require('dotenv').config();
+console.log('Database uri:', `${process.env.MONGO1_URI}`);
+console.log('Database user:', `${process.env.MONGO_USER}`);
 const options = {
     authSource: 'admin',
     user: `${process.env.MONGO_USER}`,

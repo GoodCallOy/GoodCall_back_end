@@ -1,26 +1,5 @@
 import mongoose, { Document, Model, Schema  } from 'mongoose';
-
-export interface IAgentStats extends Document {
-    name: string;
-    meetings: number;
-    call_time: number;
-    calls_made: number;
-    outgoing_calls: number;
-    answered_calls: number;
-    response_rate: number;
-    case: string;
-    create_date: Date;
-    calling_date: {
-      start: {
-        type: Date,
-        required: true,
-      },
-      end: {
-        type: Date,
-        required: true,
-      },
-    },
-}
+import IAgentStats from '../types/IAgentStats';
 
 const agentStatsSchema: Schema<IAgentStats> = new Schema<IAgentStats>({
     name: {

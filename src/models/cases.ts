@@ -1,14 +1,7 @@
 import mongoose, { Document, Model, Schema  } from 'mongoose';
+import ICases from '../types/ICases';
 
-export interface Icases extends Document {
-    name: string;
-    billing: number;
-    state: string;
-    type: string;
-    create_date: Date;
-}
-
-const casesSchema: Schema<Icases> = new Schema<Icases>({
+const casesSchema: Schema<ICases> = new Schema<ICases>({
     name: {
       type: String,
       required: true,
@@ -31,6 +24,6 @@ const casesSchema: Schema<Icases> = new Schema<Icases>({
     },
 });
 
-const Cases: Model<Icases> = mongoose.model<Icases>('Cases', casesSchema);
+const Cases: Model<ICases> = mongoose.model<ICases>('Cases', casesSchema);
 
 export default Cases;

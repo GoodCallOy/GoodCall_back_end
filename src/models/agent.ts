@@ -1,11 +1,5 @@
 import mongoose, { Document, Model, Schema  } from 'mongoose';
-
-export interface IAgent extends Document {
-    name: string;
-    cases: string[];
-    position: string;
-    create_date: Date;
-}
+import IAgent from '../types/IAgent';
 
 const agentSchema: Schema<IAgent> = new Schema<IAgent>({
     name: {

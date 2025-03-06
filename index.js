@@ -14,9 +14,11 @@ app.use(express_1.default.json());
 const cases_1 = __importDefault(require("./src/routes/cases"));
 const agentStats_1 = __importDefault(require("./src/routes/agentStats"));
 const agent_1 = __importDefault(require("./src/routes/agent"));
-app.use('/api/v1/agentStats', agentStats_1.default);
+const agentGoals_1 = __importDefault(require("./src/routes/agentGoals"));
+app.use('/api/v1/agentstats', agentStats_1.default);
 app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
+app.use('/api/v1/agentgoals', agentGoals_1.default);
 app.listen(serverConfig_json_1.port, () => {
     console.log(`Server is listening on port ${serverConfig_json_1.port}...`);
 });
