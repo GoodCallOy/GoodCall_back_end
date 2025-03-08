@@ -6,14 +6,18 @@ const agentGoalSchema = new Schema<IAgentGoals>({
       type: String, 
       required: true 
     },
+    case: { 
+      type: String, 
+      required: true 
+    },
     goal: { 
       type: String,
        required: true 
     },
-    goal_date: { 
-      type: Date, 
-      required: true 
-    }, 
+    goal_date: {
+      start: { type: Date, required: true },
+      end: { type: Date, required: true },
+    },
     type: { 
       type: String,
       required: true 
