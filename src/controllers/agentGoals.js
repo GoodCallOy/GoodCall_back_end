@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAgentGoals = exports.modifyAgentGoals = exports.addAgentGoals = exports.getAgentGoalsById = exports.getAllAgentGoals = void 0;
+exports.deleteAgentGoals = exports.modifyAgentGoals = exports.getAgentGoalsByAgentAndMonth = exports.addAgentGoals = exports.getAgentGoalsById = exports.getAllAgentGoals = void 0;
 const agentGoals_1 = __importDefault(require("../models/agentGoals"));
 const getAllAgentGoals = async (req, res) => {
     try {
@@ -43,9 +43,13 @@ const addAgentGoals = async (req, res) => {
         // Create a new agent using the data from the request body
         const newAgent = new agentGoals_1.default({
             agent: req.body.agent,
+            case: req.body.case,
             goal: req.body.goal,
-            goal_date: req.body.goal_date,
             type: req.body.type,
+            goal_date: {
+                start: req.body.goal_date.start,
+                end: req.body.goal_date.end,
+            },
         });
         // Save the new agent to the database
         await newAgent.save();
@@ -64,6 +68,33 @@ const addAgentGoals = async (req, res) => {
     }
 };
 exports.addAgentGoals = addAgentGoals;
+const getAgentGoalsByAgentAndMonth = async (req, res) => {
+    try {
+        const { agent } = req.params; // get agent from URL params
+        const { month } = req.query; // Get month from query params
+        console.log("agent", agent);
+        console.log("month", month);
+        if (!agent) {
+            return res.status(400).json({ error: "Agent " });
+        }
+        // Convert 'YYYY-MM' (e.g., '2025-03') into date range
+        const startDate = new Date(`${month}-01T00:00:00.000Z`);
+        const endDate = new Date(startDate);
+        endDate.setMonth(startDate.getMonth() + 1); // Moves to the next month
+        // Query agent goals for the given month
+        const goals = await agentGoals_1.default.find({
+            agent: agent,
+            "goal_date.start": { $gte: startDate, $lt: endDate }
+        });
+        console.log("goals", goals);
+        res.json(goals);
+    }
+    catch (error) {
+        console.error('Error fetching agent goals:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+exports.getAgentGoalsByAgentAndMonth = getAgentGoalsByAgentAndMonth;
 const modifyAgentGoals = async (req, res) => {
     const agentId = req.params.id;
     const updatedAgentData = req.body;

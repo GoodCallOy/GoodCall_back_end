@@ -40,9 +40,13 @@ export const addAgentGoals = async (req: Request, res: Response) => {
     // Create a new agent using the data from the request body
     const newAgent = new AgentGoals({
       agent: req.body.agent,
+      case: req.body.case,
       goal: req.body.goal,
-      goal_date: req.body.goal_date,
       type: req.body.type,
+      goal_date: {
+        start: req.body.goal_date.start,
+        end: req.body.goal_date.end,
+      },   
     });
 
     // Save the new agent to the database
@@ -60,6 +64,36 @@ export const addAgentGoals = async (req: Request, res: Response) => {
       message: err.message,
     });
   }
+};
+export const getAgentGoalsByAgentAndMonth = async (req: Request, res: Response) => {
+  try {
+
+    const { agent } = req.params;  // get agent from URL params
+    const { month } = req.query;   // Get month from query params
+
+    console.log("agent", agent);
+    console.log("month", month);
+
+    if (!agent) {
+        return res.status(400).json({ error: "Agent " });
+    }
+
+    // Convert 'YYYY-MM' (e.g., '2025-03') into date range
+    const startDate = new Date(`${month}-01T00:00:00.000Z`);
+    const endDate = new Date(startDate);
+    endDate.setMonth(startDate.getMonth() + 1); // Moves to the next month
+
+    // Query agent goals for the given month
+    const goals = await AgentGoals.find({
+        agent: agent,
+        "goal_date.start": { $gte: startDate, $lt: endDate }
+    });
+    console.log("goals", goals);
+    res.json(goals);
+} catch (error) {
+    console.error('Error fetching agent goals:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+}
 };
 
 export const modifyAgentGoals = async (req: Request, res: Response) => {
