@@ -6,6 +6,7 @@ interface IAgentGoals extends Document {
     goal: string;
     goal_date: Date;
     type: string;
+    monthKey: string;
     create_date: Date;
 }
 
