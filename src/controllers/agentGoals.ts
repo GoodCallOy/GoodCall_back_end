@@ -46,7 +46,8 @@ export const addAgentGoals = async (req: Request, res: Response) => {
       goal_date: {
         start: req.body.goal_date.start,
         end: req.body.goal_date.end,
-      },   
+      },
+      monthkey: req.body.monthkey,
     });
 
     // Save the new agent to the database
