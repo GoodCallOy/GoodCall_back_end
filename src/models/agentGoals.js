@@ -45,6 +45,10 @@ const agentGoalSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    monthKey: {
+        type: String,
+        required: true
+    },
     create_date: {
         type: Date,
         default: Date.now

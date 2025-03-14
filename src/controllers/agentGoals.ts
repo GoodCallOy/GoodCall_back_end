@@ -47,7 +47,7 @@ export const addAgentGoals = async (req: Request, res: Response) => {
         start: req.body.goal_date.start,
         end: req.body.goal_date.end,
       },
-      monthkey: req.body.monthkey,
+      monthKey: req.body.monthKey,
     });
 
     // Save the new agent to the database
@@ -79,15 +79,10 @@ export const getAgentGoalsByAgentAndMonth = async (req: Request, res: Response) 
         return res.status(400).json({ error: "Agent " });
     }
 
-    // Convert 'YYYY-MM' (e.g., '2025-03') into date range
-    const startDate = new Date(`${month}-01T00:00:00.000Z`);
-    const endDate = new Date(startDate);
-    endDate.setMonth(startDate.getMonth() + 1); // Moves to the next month
-
     // Query agent goals for the given month
     const goals = await AgentGoals.find({
         agent: agent,
-        "goal_date.start": { $gte: startDate, $lt: endDate }
+        monthKey: month,
     });
     console.log("goals", goals);
     res.json(goals);

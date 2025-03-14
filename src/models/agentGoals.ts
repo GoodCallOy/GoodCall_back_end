@@ -22,6 +22,10 @@ const agentGoalSchema = new Schema<IAgentGoals>({
       type: String,
       required: true 
     },
+    monthKey: {
+      type: String, 
+      required: true
+    },
     create_date: { 
       type: Date, 
       default: Date.now 
