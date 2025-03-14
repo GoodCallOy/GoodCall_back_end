@@ -7,6 +7,6 @@ router.route("/").get(getAllAgents).post(addAgent);
 
 router.route("/:id").get(getAgentById).post(modifyAgent).delete(deleteAgent);
 
-router.get('/:name', getAgentByName);
+router.route('/getagent/:name').get(getAgentByName);
 
 export default router as Router;
