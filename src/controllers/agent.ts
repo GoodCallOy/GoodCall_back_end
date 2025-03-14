@@ -32,7 +32,24 @@ export const getAgentById = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+export const getAgentByName = async (req: Request, res: Response) => {
+  const agentName = req.params.name;
 
+  try {
+    console.log("Getting agent by name:", agentName);
+    
+    const agent = await Agent.findOne({ name: agentName });
+
+    if (!agent) {
+      return res.status(404).json({ error: 'Agent name not found' });
+    }
+
+    res.status(200).json(agent);
+  } catch (error) {
+    console.error("Error fetching agent by name:", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 export const addAgent = async (req: Request, res: Response) => {
   try {
     console.log("agent object:", req.body);

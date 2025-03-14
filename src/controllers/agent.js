@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAgent = exports.modifyAgent = exports.addAgent = exports.getAgentById = exports.getAllAgents = void 0;
+exports.deleteAgent = exports.modifyAgent = exports.addAgent = exports.getAgentByName = exports.getAgentById = exports.getAllAgents = void 0;
 const agent_1 = __importDefault(require("../models/agent"));
 const getAllAgents = async (req, res) => {
     try {
@@ -37,6 +37,22 @@ const getAgentById = async (req, res) => {
     }
 };
 exports.getAgentById = getAgentById;
+const getAgentByName = async (req, res) => {
+    const agentName = req.params.name;
+    try {
+        console.log("Getting agent by name:", agentName);
+        const agent = await agent_1.default.findOne({ name: agentName });
+        if (!agent) {
+            return res.status(404).json({ error: 'Agent name not found' });
+        }
+        res.status(200).json(agent);
+    }
+    catch (error) {
+        console.error("Error fetching agent by name:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+exports.getAgentByName = getAgentByName;
 const addAgent = async (req, res) => {
     try {
         console.log("agent object:", req.body);
