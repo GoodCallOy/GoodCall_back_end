@@ -5,8 +5,10 @@ import { AuthRequest } from "../types/express"; // Ensure you're using the corre
 
 export const getCurrentUser = (req: Request, res: Response) => {
     if (!req.user) {
+      console.log("Not authenticated");
       return res.status(401).json({ message: "Not authenticated" });
     }
+    console.log("User authenticated");
     res.json(req.user);  // Return the authenticated user
   };
 // ✅ Update user data

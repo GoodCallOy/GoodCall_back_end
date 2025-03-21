@@ -7,8 +7,10 @@ exports.getAllUsers = exports.createUser = exports.logoutUser = exports.updatedU
 const user_1 = __importDefault(require("../models/user"));
 const getCurrentUser = (req, res) => {
     if (!req.user) {
+        console.log("Not authenticated");
         return res.status(401).json({ message: "Not authenticated" });
     }
+    console.log("User authenticated");
     res.json(req.user); // Return the authenticated user
 };
 exports.getCurrentUser = getCurrentUser;

@@ -46,8 +46,10 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: [ "http://localhost:3000", "https://goodcall-front-end.onrender.com" ],
-    credentials: true,
+    origin: ["http://localhost:8080", "https://goodcall.fi", "https://goodcall-front-end.onrender.com"], // Allow these origins
+    credentials: true, // Allow cookies/session authentication
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
   })
 );
 

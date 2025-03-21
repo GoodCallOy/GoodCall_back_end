@@ -41,8 +41,10 @@ app.use((0, express_session_1.default)({
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://goodcall-front-end.onrender.com"],
-    credentials: true,
+    origin: ["http://localhost:8080", "https://goodcall.fi", "https://goodcall-front-end.onrender.com"], // Allow these origins
+    credentials: true, // Allow cookies/session authentication
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
 }));
 app.use(express_1.default.json());
 // Prevent caching responses
