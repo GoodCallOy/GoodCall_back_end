@@ -13,6 +13,7 @@ import agentStatsRouter from './src/routes/agentStats';
 import agentRouter from './src/routes/agent';
 import agentGoalsRouter from './src/routes/agentGoals';
 import authRoutes from "./src/routes/authRoutes";
+import userRoutes from "./src/routes/user";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   })
@@ -66,6 +68,7 @@ app.use('/api/v1/agent', agentRouter);
 app.use('/api/v1/cases', caseRouter);
 app.use('/api/v1/agentgoals', agentGoalsRouter);
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
 
 // Start the server
 app.listen(port, () => {

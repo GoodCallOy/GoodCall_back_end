@@ -17,6 +17,7 @@ const agentStats_1 = __importDefault(require("./src/routes/agentStats"));
 const agent_1 = __importDefault(require("./src/routes/agent"));
 const agentGoals_1 = __importDefault(require("./src/routes/agentGoals"));
 const authRoutes_1 = __importDefault(require("./src/routes/authRoutes"));
+const user_1 = __importDefault(require("./src/routes/user"));
 dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
@@ -33,6 +34,7 @@ app.use((0, express_session_1.default)({
     cookie: {
         secure: process.env.NODE_ENV === "production",
         httpOnly: true,
+        sameSite: "none",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
 }));
@@ -56,6 +58,7 @@ app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
 app.use('/api/v1/agentgoals', agentGoals_1.default);
 app.use("/auth", authRoutes_1.default);
+app.use("/user", user_1.default);
 // Start the server
 app.listen(serverConfig_json_1.port, () => {
     console.log(`Server is listening on port ${serverConfig_json_1.port}...`);

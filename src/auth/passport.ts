@@ -37,11 +37,9 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done: (err: any, user: any | false | null) => void) => {
       try {
-        console.log("🔵 Google profile received:", profile);
     
         let user = await User.findOne({ googleId: profile.id });
-        console.log("🟡 Found user in DB:", user);
-    
+
         if (!user) {
           console.log("🟠 No user found, creating a new one...");
           

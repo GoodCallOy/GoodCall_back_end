@@ -36,9 +36,7 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
 }, async (accessToken, refreshToken, profile, done) => {
     var _a, _b;
     try {
-        console.log("🔵 Google profile received:", profile);
         let user = await user_1.default.findOne({ googleId: profile.id });
-        console.log("🟡 Found user in DB:", user);
         if (!user) {
             console.log("🟠 No user found, creating a new one...");
             user = new user_1.default({

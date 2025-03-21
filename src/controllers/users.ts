@@ -35,11 +35,19 @@ export const updatedUser = async (req: AuthRequest, res: Response) => {
 
 // ✅ Logout user
 export const logoutUser = (req: Request, res: Response) => {
-  req.logout((err) => {
-    if (err) return res.status(500).json({ message: "Logout failed" });
-    res.json({ message: "Logged out successfully" });
-  });
-};
+    req.logout((err) => {
+        if (err) return res.status(500).json({ message: "Logout failed" });
+        req.session.destroy((err) => {
+          if (err) {
+            return res.status(500).json({ message: "Session destruction failed" });
+          }
+          res.clearCookie('connect.sid'); // Clear session cookie
+          console.log("🚪 cookie cleard");
+          console.log("🚪 Logout successful"); 
+          res.redirect("http://localhost:8080/login"); 
+        });
+      });
+    };
 
 // ✅ Create a new user if not exists
 export const createUser = async (req: Request, res: Response) => {

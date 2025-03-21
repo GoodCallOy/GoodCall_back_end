@@ -37,7 +37,15 @@ const logoutUser = (req, res) => {
     req.logout((err) => {
         if (err)
             return res.status(500).json({ message: "Logout failed" });
-        res.json({ message: "Logged out successfully" });
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ message: "Session destruction failed" });
+            }
+            res.clearCookie('connect.sid'); // Clear session cookie
+            console.log("🚪 cookie cleard");
+            console.log("🚪 Logout successful");
+            res.redirect("http://localhost:8080/login");
+        });
     });
 };
 exports.logoutUser = logoutUser;
