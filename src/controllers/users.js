@@ -46,7 +46,11 @@ const logoutUser = (req, res) => {
             res.clearCookie('connect.sid'); // Clear session cookie
             console.log("🚪 cookie cleard");
             console.log("🚪 Logout successful");
-            res.redirect("http://localhost:8080/login");
+            const FRONTEND_URL = process.env.NODE_ENV === "production"
+                ? "https://goodcall-front-end.onrender.com/login"
+                : "http://localhost:8080/login";
+            console.log("FRONTEND_URL", FRONTEND_URL);
+            res.redirect(FRONTEND_URL);
         });
     });
 };
