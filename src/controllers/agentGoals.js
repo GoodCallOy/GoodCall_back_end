@@ -9,7 +9,6 @@ const getAllAgentGoals = async (req, res) => {
     try {
         console.log("getting all agents");
         const allAgents = await agentGoals_1.default.find();
-        console.log("all agents found", allAgents);
         res.status(200).json(allAgents);
     }
     catch (err) {
@@ -39,7 +38,6 @@ const getAgentGoalsById = async (req, res) => {
 exports.getAgentGoalsById = getAgentGoalsById;
 const addAgentGoals = async (req, res) => {
     try {
-        console.log("agent goals object:", req.body);
         // Create a new agent using the data from the request body
         const newAgent = new agentGoals_1.default({
             agent: req.body.agent,

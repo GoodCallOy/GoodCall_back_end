@@ -5,8 +5,6 @@ export const getAllCases = async (req: Request, res: Response) => {
   try {
     console.log("getting all Cases");
     const allCases = await Cases.find();
-    console.log("all cases found", allCases);
-
     res.status(200).json(allCases);
   } catch (err: any) {
     res.status(400).json({

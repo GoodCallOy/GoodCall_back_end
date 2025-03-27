@@ -9,7 +9,6 @@ const getAllCases = async (req, res) => {
     try {
         console.log("getting all Cases");
         const allCases = await cases_1.default.find();
-        console.log("all cases found", allCases);
         res.status(200).json(allCases);
     }
     catch (err) {

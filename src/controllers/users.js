@@ -48,7 +48,7 @@ const logoutUser = (req, res) => {
             console.log("🚪 Logout successful");
             const FRONTEND_URL = process.env.NODE_ENV === "production"
                 ? "https://goodcall-front-end.onrender.com/login"
-                : "http://localhost:8080/login";
+                : "http://localhost:8080/#/login";
             console.log("FRONTEND_URL", FRONTEND_URL);
             res.redirect(FRONTEND_URL);
         });

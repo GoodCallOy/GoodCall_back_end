@@ -10,7 +10,7 @@ const router = express.Router();
 const CLIENT_URL =
   process.env.NODE_ENV === "production"
     ? "https://goodcall.fi"
-    : "http://localhost:8080";
+    : "http://localhost:8080/#/dashboard";
 
 // Redirect to Google OAuth login
 router.get(
@@ -41,13 +41,26 @@ router.get(
 // Logout
 router.get("/logout", (req, res) => {
   console.log("🚪 Logout request received");
+
   req.logout((err) => {
     if (err) {
       console.error("❌ Logout error:", err);
-      return res.status(500).send("Error logging out");
+      return res.status(500).json({ message: "Error logging out" });
     }
-    res.redirect(`${CLIENT_URL}/`);
+
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Session destruction failed" });
+      }
+
+      res.clearCookie("connect.sid"); // Clear session cookie
+      console.log("✅ Logout successful");
+
+      // Return JSON instead of redirecting
+      res.json({ success: true, message: "Logged out successfully" });
+    });
   });
 });
+
 
 export default router;
