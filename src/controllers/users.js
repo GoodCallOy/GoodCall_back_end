@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllUsers = exports.createUser = exports.logoutUser = exports.updatedUser = exports.getCurrentUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const getCurrentUser = (req, res) => {
+    console.log("🔵 getCurrentUser called");
     if (!req.user) {
         console.log("Not authenticated");
         return res.status(401).json({ message: "Not authenticated" });
@@ -47,7 +48,7 @@ const logoutUser = (req, res) => {
             console.log("🚪 cookie cleard");
             console.log("🚪 Logout successful");
             const FRONTEND_URL = process.env.NODE_ENV === "production"
-                ? "https://goodcall-front-end.onrender.com/login"
+                ? "https://goodcall-front-end.onrender.com/#/login"
                 : "http://localhost:8080/#/login";
             console.log("FRONTEND_URL", FRONTEND_URL);
             res.redirect(FRONTEND_URL);
@@ -73,6 +74,7 @@ const createUser = async (req, res) => {
 exports.createUser = createUser;
 // ✅ Get all users
 const getAllUsers = async (_req, res) => {
+    console.log("🔵 getAllUsers called");
     try {
         const users = await user_1.default.find();
         res.json(users);

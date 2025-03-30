@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import User from "../models/user";
-import IUser from "../types/IUser";
 import { AuthRequest } from "../types/express"; // Ensure you're using the correct type
 
 export const getCurrentUser = (req: Request, res: Response) => {
+  console.log("🔵 getCurrentUser called");
     if (!req.user) {
       console.log("Not authenticated");
       return res.status(401).json({ message: "Not authenticated" });
@@ -49,7 +49,7 @@ export const logoutUser = (req: Request, res: Response) => {
 
           const FRONTEND_URL =
           process.env.NODE_ENV === "production"
-              ? "https://goodcall-front-end.onrender.com/login"
+              ? "https://goodcall-front-end.onrender.com/#/login"
               : "http://localhost:8080/#/login";
 
         console.log("FRONTEND_URL", FRONTEND_URL);
@@ -79,6 +79,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 // ✅ Get all users
 export const getAllUsers = async (_req: Request, res: Response) => {
+  console.log("🔵 getAllUsers called");
   try {
     const users = await User.find();
     res.json(users);

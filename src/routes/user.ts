@@ -6,9 +6,6 @@ import {
   logoutUser
 } from "../controllers/users";
 
-// ✅ Extending Request type to include user
-import { AuthRequest } from "../types/express"; // Make sure you have the correct path for this file
-
 const router = Router();
 
 // Routes for getting and creating users
@@ -24,4 +21,4 @@ router.route("/me")
 router.route("/logout")
   .get(logoutUser);          // Logout user
 
-export default router;
+export default router as Router;

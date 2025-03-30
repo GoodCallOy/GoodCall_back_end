@@ -18,6 +18,7 @@ const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // Import routers
 const cases_1 = __importDefault(require("./src/routes/cases"));
+const tests_1 = __importDefault(require("./src/routes/tests"));
 const agentStats_1 = __importDefault(require("./src/routes/agentStats"));
 const agent_1 = __importDefault(require("./src/routes/agent"));
 const agentGoals_1 = __importDefault(require("./src/routes/agentGoals"));
@@ -63,13 +64,14 @@ app.use((req, res, next) => {
   res.setHeader('Expires', '0');
   next();
 });
-// Define API routes
+// Define API 
+app.use("/api/v1/auth", authRoutes_1.default);
+app.use("/api/v1/test", tests_1.default);
 app.use('/api/v1/agentstats', agentStats_1.default);
 app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
 app.use('/api/v1/agentgoals', agentGoals_1.default);
-app.use("/auth", authRoutes_1.default);
-app.use("/user", user_1.default);
+app.use("/api/v1/user", user_1.default);
 // Start the server
 app.listen(serverConfig_json_1.port, () => {
   console.log(`Server is listening on port ${serverConfig_json_1.port}...`);

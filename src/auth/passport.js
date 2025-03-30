@@ -32,7 +32,7 @@ passport_1.default.deserializeUser(async (id, done) => {
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback",
+    callbackURL: "https://goodcall.fi/api/v1/auth/google/callback",
 }, async (accessToken, refreshToken, profile, done) => {
     var _a, _b;
     try {

@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 
 // Import routers
 import caseRouter from './src/routes/cases';
+import testRouter from './src/routes/tests';
 import agentStatsRouter from './src/routes/agentStats';
 import agentRouter from './src/routes/agent';
 import agentGoalsRouter from './src/routes/agentGoals';
@@ -64,13 +65,15 @@ app.use((req, res, next) => {
 });
 
 
-// Define API routes
+// Define API 
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/test", testRouter);
 app.use('/api/v1/agentstats', agentStatsRouter);
 app.use('/api/v1/agent', agentRouter);
 app.use('/api/v1/cases', caseRouter);
 app.use('/api/v1/agentgoals', agentGoalsRouter);
-app.use("/auth", authRoutes);
-app.use("/user", userRoutes);
+
+app.use("/api/v1/user", userRoutes);
 
 // Start the server
 app.listen(port, () => {
