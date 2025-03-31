@@ -93,6 +93,8 @@ export const testAuth = (req: Request, res: Response) => {
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   console.log('🔒 Checking authentication status', req.isAuthenticated())
+  console.log('🔍 Session:', req.session) // <== Log session to verify
+  console.log('🔍 Cookies:', req.cookies) // <== Log cookies to verify
 
   if (!req.cookies || !req.cookies.token) {
     return res.status(401).json({ message: 'No token provided' })
