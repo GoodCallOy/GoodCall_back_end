@@ -30,35 +30,39 @@ dotenv_1.default.config();
 (0, dbConnection_1.default)();
 const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
+app.use(express_1.default.urlencoded({
+  extended: true
+})); // Parse URL-encoded bodies
 // Session middleware
 app.use((0, express_session_1.default)({
   secret: process.env.SESSION_SECRET,
   // Keep secret in .env
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === "production" ? true : false,
+    // Only secure in production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    // "none" for cross
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+  },
   store: connect_mongo_1.default.create({
     mongoUrl: process.env.MONGO2_URI,
     // Use your MongoDB connection string
     collectionName: "sessions"
-  }),
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "none",
-    maxAge: 24 * 60 * 60 * 1000 // 1 day
-  }
+  })
 }));
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
 app.use((0, cors_1.default)({
   origin: ["http://localhost:8080", "https://goodcall.fi", "https://goodcall-front-end.onrender.com"],
-  // Allow these origins
   credentials: true,
-  // Allow cookies/session authentication
+  // Allow cookies
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
+  allowedHeaders: "Content-Type,Authorization" // ✅ Add Authorization header
 }));
 app.use(express_1.default.json());
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
 // Prevent caching responses
 app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

@@ -73,6 +73,8 @@ const testAuth = (req, res) => {
 exports.testAuth = testAuth;
 const isAuthenticated = (req, res, next) => {
     console.log('🔒 Checking authentication status', req.isAuthenticated());
+    console.log('🔍 Session:', req.session); // <== Log session to verify
+    console.log('🔍 Cookies:', req.cookies); // <== Log cookies to verify
     if (!req.cookies || !req.cookies.token) {
         return res.status(401).json({ message: 'No token provided' });
     }
