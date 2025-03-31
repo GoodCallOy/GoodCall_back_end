@@ -7,6 +7,7 @@ const router = (0, express_1.Router)();
 router.route("/google").get(authRoutes_1.login);
 // Callback route for Google OAuth
 router.route("/google/callback").get(authRoutes_1.getCallback);
+router.route("/me").get(authRoutes_1.isAuthenticated);
 // Logout
 router.route("/logout").get(authRoutes_1.logoutUser);
 // Test authentication route

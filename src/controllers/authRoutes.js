@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testAuth = exports.getCallback = exports.login = exports.logoutUser = void 0;
+exports.isAuthenticated = exports.testAuth = exports.getCallback = exports.login = exports.logoutUser = void 0;
 const passport_1 = __importDefault(require("passport"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1.default.config();
 const CLIENT_URL = process.env.NODE_ENV === 'production'
     ? 'https://goodcall-front-end.onrender.com/#/dashboard'
@@ -47,7 +48,20 @@ exports.getCallback = [
         failureRedirect: `${CLIENT_URL}/login`
     }),
     (req, res) => {
-        console.log('✅ Google authentication successful, redirecting...');
+        if (!req.user) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+        console.log('✅ Google authentication successful, issuing token...');
+        // Generate JWT token
+        const user = req.user;
+        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        // Set the token in an HTTP-only cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Secure only in production
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
         res.redirect(CLIENT_URL);
     }
 ];
@@ -56,3 +70,18 @@ const testAuth = (req, res) => {
     res.json({ message: 'Auth route works' });
 };
 exports.testAuth = testAuth;
+const isAuthenticated = (req, res, next) => {
+    console.log('🔒 Checking authentication status', req.isAuthenticated());
+    const token = req.cookies.token; // Get token from cookies
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        res.json(decoded); // Send user info back to frontend
+    }
+    catch (error) {
+        return res.status(403).json({ message: 'Invalid token' });
+    }
+};
+exports.isAuthenticated = isAuthenticated;

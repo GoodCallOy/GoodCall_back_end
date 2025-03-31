@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { logoutUser, login, getCallback, testAuth } from "../controllers/authRoutes"; // Adjust the import path as necessary
+import { logoutUser, login, getCallback, testAuth, isAuthenticated } from "../controllers/authRoutes"; // Adjust the import path as necessary
   
 const router = Router();
 
@@ -8,6 +8,8 @@ router.route("/google").get(login);
 
 // Callback route for Google OAuth
 router.route("/google/callback").get(getCallback);
+
+router.route("/me").get(isAuthenticated);
 
 // Logout
 router.route("/logout").get(logoutUser);
