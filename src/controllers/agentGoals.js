@@ -7,7 +7,6 @@ exports.deleteAgentGoals = exports.modifyAgentGoals = exports.getAgentGoalsByAge
 const agentGoals_1 = __importDefault(require("../models/agentGoals"));
 const getAllAgentGoals = async (req, res) => {
     try {
-        console.log("getting all agents");
         const allAgents = await agentGoals_1.default.find();
         res.status(200).json(allAgents);
     }

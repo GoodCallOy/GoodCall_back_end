@@ -3,7 +3,6 @@ import AgentGoals from "../models/agentGoals";
 import IAgentGoals from "../types/IAgentGoals";
 export const getAllAgentGoals = async (req: Request, res: Response) => {
   try {
-    console.log("getting all agents");
     const allAgents = await AgentGoals.find();
     res.status(200).json(allAgents);
   } catch (err: any) {

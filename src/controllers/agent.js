@@ -7,7 +7,6 @@ exports.deleteAgent = exports.modifyAgent = exports.addAgent = exports.getAgentB
 const agent_1 = __importDefault(require("../models/agent"));
 const getAllAgents = async (req, res) => {
     try {
-        console.log("getting all agents");
         const allAgents = await agent_1.default.find();
         res.status(200).json(allAgents);
     }

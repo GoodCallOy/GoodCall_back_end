@@ -15,6 +15,7 @@ import agentRouter from './src/routes/agent';
 import agentGoalsRouter from './src/routes/agentGoals';
 import authRoutes from "./src/routes/authRoutes";
 import userRoutes from "./src/routes/user";
+import cookieParser from 'cookie-parser'
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+app.use(cookieParser())
 
 // Session middleware
 app.use(

@@ -3,7 +3,7 @@ import Cases from "../models/cases";
 import ICases from "../types/ICases";
 export const getAllCases = async (req: Request, res: Response) => {
   try {
-    console.log("getting all Cases");
+    
     const allCases = await Cases.find();
     res.status(200).json(allCases);
   } catch (err: any) {

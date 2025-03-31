@@ -3,7 +3,7 @@ import AgentStats from "../models/agentStats";
 import IAgent from "../types/IAgentStats";
 export const getAllAgentStats = async (req: Request, res: Response) => {
   try {
-    console.log("getting all agentstats");
+    
     const allAgents = await AgentStats.find();
     res.status(200).json(allAgents);
   } catch (err: any) {

@@ -63,8 +63,7 @@ export const getCallback = [
       return res.status(401).json({ message: 'User not authenticated' })
     }
 
-    console.log('✅ Google authentication successful, issuing token...')
-
+    console.log('🔑 User authenticated successfully')
     // Generate JWT token
     const user = req.user as CustomUser
     const token = jwt.sign(
@@ -72,6 +71,8 @@ export const getCallback = [
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     )
+
+    console.log('✅ Google authentication successful, issuing token...', token)
 
     // Set the token in an HTTP-only cookie
     res.cookie('token', token, {
@@ -92,16 +93,17 @@ export const testAuth = (req: Request, res: Response) => {
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   console.log('🔒 Checking authentication status', req.isAuthenticated())
-  const token = req.cookies.token // Get token from cookies
 
-  if (!token) {
+  if (!req.cookies || !req.cookies.token) {
     return res.status(401).json({ message: 'No token provided' })
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!)
+    const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET!)
+    console.log('✅ Token verified:', decoded)
     res.json(decoded) // Send user info back to frontend
   } catch (error) {
+    console.error('❌ Invalid token:', error)
     return res.status(403).json({ message: 'Invalid token' })
   }
 }

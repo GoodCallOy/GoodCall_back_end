@@ -19,10 +19,12 @@ const agent_1 = __importDefault(require("./src/routes/agent"));
 const agentGoals_1 = __importDefault(require("./src/routes/agentGoals"));
 const authRoutes_1 = __importDefault(require("./src/routes/authRoutes"));
 const user_1 = __importDefault(require("./src/routes/user"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
 const app = (0, express_1.default)();
+app.use((0, cookie_parser_1.default)());
 // Session middleware
 app.use((0, express_session_1.default)({
     secret: process.env.SESSION_SECRET, // Keep secret in .env

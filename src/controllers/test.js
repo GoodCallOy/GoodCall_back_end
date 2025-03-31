@@ -7,7 +7,6 @@ exports.deleteCase = exports.modifyCase = exports.addCase = exports.getCaseById 
 const cases_1 = __importDefault(require("../models/cases"));
 const getAllCases = async (req, res) => {
     try {
-        console.log("getting all Cases");
         const allCases = await cases_1.default.find();
         res.status(200).json(allCases);
     }

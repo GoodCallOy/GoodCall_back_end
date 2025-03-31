@@ -51,10 +51,11 @@ exports.getCallback = [
         if (!req.user) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
-        console.log('✅ Google authentication successful, issuing token...');
+        console.log('🔑 User authenticated successfully');
         // Generate JWT token
         const user = req.user;
         const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        console.log('✅ Google authentication successful, issuing token...', token);
         // Set the token in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true,
@@ -72,15 +73,16 @@ const testAuth = (req, res) => {
 exports.testAuth = testAuth;
 const isAuthenticated = (req, res, next) => {
     console.log('🔒 Checking authentication status', req.isAuthenticated());
-    const token = req.cookies.token; // Get token from cookies
-    if (!token) {
+    if (!req.cookies || !req.cookies.token) {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        const decoded = jsonwebtoken_1.default.verify(req.cookies.token, process.env.JWT_SECRET);
+        console.log('✅ Token verified:', decoded);
         res.json(decoded); // Send user info back to frontend
     }
     catch (error) {
+        console.error('❌ Invalid token:', error);
         return res.status(403).json({ message: 'Invalid token' });
     }
 };
