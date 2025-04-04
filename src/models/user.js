@@ -23,13 +23,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// models/user.ts
 const mongoose_1 = __importStar(require("mongoose"));
 const UserSchema = new mongoose_1.Schema({
+    id: { type: String, required: true },
     googleId: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     email: { type: String, unique: true },
     avatar: { type: String, required: true },
     access: { type: String }
 });
-const User = mongoose_1.default.model("User", UserSchema);
+const User = mongoose_1.default.model("User", UserSchema); // Ensure User implements IUser interface
 exports.default = User;

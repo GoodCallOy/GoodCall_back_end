@@ -1,6 +1,8 @@
+// ../types/IUser.ts
 import { Document } from "mongoose";
 
 interface IUser extends Document {
+    _id: string;
     googleId: string;
     name: string;
     email?: string;
@@ -8,4 +10,4 @@ interface IUser extends Document {
     access?: string;
 }
 
-export default IUser;
+export default IUser; // <-- Default export

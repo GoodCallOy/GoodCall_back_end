@@ -57,12 +57,13 @@ exports.getCallback = [
         const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
         console.log('✅ Google authentication successful, issuing token...', token);
         // Set the token in an HTTP-only cookie
-        res.cookie('token', token, {
+        res.cookie('connect.sid', req.sessionID, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Secure only in production
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            secure: true, // Change to false if testing locally
+            sameSite: 'none',
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
+        console.log('🔵 Issued session cookie:', req.sessionID);
         res.redirect(CLIENT_URL);
     }
 ];
@@ -73,10 +74,11 @@ const testAuth = (req, res) => {
 exports.testAuth = testAuth;
 const isAuthenticated = (req, res, next) => {
     console.log('🔒 Checking authentication status', req.isAuthenticated());
-    console.log('🔍 Session:', req.session); // <== Log session to verify
-    console.log('🔍 Cookies:', req.cookies); // <== Log cookies to verify
-    if (!req.cookies || !req.cookies.token) {
-        return res.status(401).json({ message: 'No token provided' });
+    console.log('🔍 Received cookies:', req.cookies); // Log incoming cookies
+    console.log('🔍 Received session:', req.session); // Log session data
+    console.log('👤 Current user:', req.user);
+    if (!req.cookies.token) {
+        return res.status(401).json({ message: 'No token found in cookies' });
     }
     try {
         const decoded = jsonwebtoken_1.default.verify(req.cookies.token, process.env.JWT_SECRET);
