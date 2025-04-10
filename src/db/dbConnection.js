@@ -14,7 +14,7 @@ const options = {
 };
 const connectDB = async () => {
     try {
-        await mongoose_1.default.connect(`${process.env.MONGO1_URI}`, options);
+        await mongoose_1.default.connect(`${process.env.MONGO2_URI}`, options);
         console.log('Connected to MongoDB');
     }
     catch (error) {

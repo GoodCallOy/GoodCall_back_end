@@ -12,11 +12,14 @@ dotenv_1.default.config();
 const user_1 = __importDefault(require("../models/user"));
 // Serialize and Deserialize User
 passport_1.default.serializeUser((user, done) => {
-    done(null, user.id);
+    console.log('✅ user to serialize:', user);
+    done(null, user._id.toString());
 });
 passport_1.default.deserializeUser(async (id, done) => {
+    console.log('✅ user deserialize id:', id);
     try {
         const user = await user_1.default.findById(id).exec();
+        console.log('✅ deserializeUser user:', user);
         if (user) {
             done(null, user); // Make sure the `user` here conforms to IUser
         }
@@ -29,10 +32,13 @@ passport_1.default.deserializeUser(async (id, done) => {
     }
 });
 // Google OAuth Strategy
+const CLIENT_URL = process.env.NODE_ENV === 'production'
+    ? "https://goodcall.fi/api/v1/auth/google/callback"
+    : "http://localhost:3030/api/v1/auth/google/callback";
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://goodcall.fi/api/v1/auth/google/callback",
+    callbackURL: CLIENT_URL,
 }, async (accessToken, refreshToken, profile, done) => {
     var _a, _b;
     try {
@@ -45,6 +51,7 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
                 email: (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0].value,
                 avatar: (_b = profile.photos) === null || _b === void 0 ? void 0 : _b[0].value,
             });
+            console.log('✅ saving user:', user);
             await user.save();
             console.log("✅ User saved to DB:", user);
         }

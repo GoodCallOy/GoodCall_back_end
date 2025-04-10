@@ -45,25 +45,27 @@ exports.getCallback = [
         next();
     },
     passport_1.default.authenticate('google', {
-        failureRedirect: `${CLIENT_URL}/login`
+        failureRedirect: `${CLIENT_URL}/login`, // Redirect to login on failure
     }),
     (req, res) => {
+        console.log('🔍 Passport user object:', req.user); // User populated by passport
         if (!req.user) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
         console.log('🔑 User authenticated successfully');
+        const user = req.user; // CustomUser type should be your user interface
         // Generate JWT token
-        const user = req.user;
-        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        console.log('✅ Google authentication successful, issuing token...', token);
-        // Set the token in an HTTP-only cookie
-        res.cookie('connect.sid', req.sessionID, {
-            httpOnly: true,
-            secure: true, // Change to false if testing locally
-            sameSite: 'none',
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        const JWTtoken = jsonwebtoken_1.default.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        console.log('✅ Google authentication successful, issuing token...', JWTtoken);
+        // Set the JWT token in an HTTP-only cookie
+        res.cookie('token', JWTtoken, {
+            httpOnly: true, // This ensures the cookie cannot be accessed via JavaScript
+            secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
+            sameSite: 'none', // Required for cross-site cookies (can be 'lax' or 'strict' depending on your needs)
+            maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
         });
-        console.log('🔵 Issued session cookie:', req.sessionID);
+        console.log('🔵 Issued JWT token in cookie');
+        // Redirect to the client (frontend)
         res.redirect(CLIENT_URL);
     }
 ];
@@ -72,22 +74,14 @@ const testAuth = (req, res) => {
     res.json({ message: 'Auth route works' });
 };
 exports.testAuth = testAuth;
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = (req, res) => {
     console.log('🔒 Checking authentication status', req.isAuthenticated());
-    console.log('🔍 Received cookies:', req.cookies); // Log incoming cookies
-    console.log('🔍 Received session:', req.session); // Log session data
+    console.log('🔍 Session:', req.session); // Log session data
     console.log('👤 Current user:', req.user);
-    if (!req.cookies.token) {
-        return res.status(401).json({ message: 'No token found in cookies' });
+    if (req.isAuthenticated()) {
+        console.log('✅ User is authenticated:', req.user);
+        return res.json(req.user); // Passport attaches user here
     }
-    try {
-        const decoded = jsonwebtoken_1.default.verify(req.cookies.token, process.env.JWT_SECRET);
-        console.log('✅ Token verified:', decoded);
-        res.json(decoded); // Send user info back to frontend
-    }
-    catch (error) {
-        console.error('❌ Invalid token:', error);
-        return res.status(403).json({ message: 'Invalid token' });
-    }
+    return res.status(401).json({ message: 'Not authenticated' });
 };
 exports.isAuthenticated = isAuthenticated;

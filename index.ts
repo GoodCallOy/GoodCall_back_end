@@ -34,10 +34,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production" ? true : false, // Only secure in production
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" for cross
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: process.env.NODE_ENV === 'production', // Set to true in production to use HTTPS
+      sameSite: 'none', // Allow cross-origin cookies
+      httpOnly: true, // Prevent JavaScript from accessing the cookie
+      maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
     },
     store: MongoStore.create({
       mongoUrl: process.env.MONGO2_URI, // Use your MongoDB connection string
