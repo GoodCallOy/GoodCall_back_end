@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 import caseRouter from './src/routes/cases';
 import testRouter from './src/routes/tests';
 import agentStatsRouter from './src/routes/agentStats';
+import agentCaseInfoRouter from './src/routes/agentCaseInfo';
 import agentRouter from './src/routes/agent';
 import agentGoalsRouter from './src/routes/agentGoals';
 import authRoutes from "./src/routes/authRoutes";
@@ -78,9 +79,11 @@ app.use((req, res, next) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/test", testRouter);
 app.use('/api/v1/agentstats', agentStatsRouter);
+app.use('/api/v1/agentCaseInfo', agentCaseInfoRouter);
 app.use('/api/v1/agent', agentRouter);
 app.use('/api/v1/cases', caseRouter);
 app.use('/api/v1/agentgoals', agentGoalsRouter);
+
 
 app.use("/api/v1/user", userRoutes);
 

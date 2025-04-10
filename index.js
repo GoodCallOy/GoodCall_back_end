@@ -15,6 +15,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cases_1 = __importDefault(require("./src/routes/cases"));
 const tests_1 = __importDefault(require("./src/routes/tests"));
 const agentStats_1 = __importDefault(require("./src/routes/agentStats"));
+const agentCaseInfo_1 = __importDefault(require("./src/routes/agentCaseInfo"));
 const agent_1 = __importDefault(require("./src/routes/agent"));
 const agentGoals_1 = __importDefault(require("./src/routes/agentGoals"));
 const authRoutes_1 = __importDefault(require("./src/routes/authRoutes"));
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 app.use("/api/v1/auth", authRoutes_1.default);
 app.use("/api/v1/test", tests_1.default);
 app.use('/api/v1/agentstats', agentStats_1.default);
+app.use('/api/v1/agentCaseInfo', agentCaseInfo_1.default);
 app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
 app.use('/api/v1/agentgoals', agentGoals_1.default);
