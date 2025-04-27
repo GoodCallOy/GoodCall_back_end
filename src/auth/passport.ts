@@ -35,7 +35,7 @@ passport.deserializeUser(async (id, done) => {
 // Google OAuth Strategy
 const CLIENT_URL =
   process.env.NODE_ENV === 'production'
-    ? "https://goodcall.fi/api/v1/auth/google/callback"
+    ? "https://goodcall-back-end.onrender.com/api/v1/auth/google/callback"
     : "http://localhost:3030/api/v1/auth/google/callback"
 
 passport.use(
