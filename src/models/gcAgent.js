@@ -24,27 +24,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const casesSchema = new mongoose_1.Schema({
+const gcAgentSchema = new mongoose_1.Schema({
     name: {
         type: String,
-        required: true,
+        required: true
     },
-    billing: {
-        type: Number,
-        required: false,
-    },
-    state: {
+    email: {
         type: String,
         required: true,
+        unique: true
     },
-    type: {
+    role: {
         type: String,
-        required: true,
+        enum: ['admin', 'caller', 'manager'],
+        required: true
     },
-    create_date: {
-        type: Date,
-        default: Date.now,
-    },
-});
-const Cases = mongoose_1.default.model('cases', casesSchema);
-exports.default = Cases;
+    active: {
+        type: Boolean,
+        default: true
+    }
+}, { timestamps: true });
+exports.default = mongoose_1.default.model('gcAgent', gcAgentSchema);

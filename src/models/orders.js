@@ -24,27 +24,39 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const casesSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        required: true,
+const OrderSchema = new mongoose_1.Schema({
+    caseId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Case',
+        required: true
     },
-    billing: {
+    goalType: {
+        type: String,
+        enum: ['hours', 'interviews', 'meetings'],
+        required: true
+    },
+    totalQuantity: {
         type: Number,
-        required: false,
+        required: true
     },
-    state: {
-        type: String,
-        required: true,
-    },
-    type: {
-        type: String,
-        required: true,
-    },
-    create_date: {
+    deadline: {
         type: Date,
-        default: Date.now,
+        required: true
     },
-});
-const Cases = mongoose_1.default.model('cases', casesSchema);
-exports.default = Cases;
+    orderStatus: {
+        type: String,
+        enum: ['pending', 'in-progress', 'completed', 'cancelled', 'on-hold'],
+        required: true
+    },
+    estimatedRevenue: {
+        type: Number,
+        required: true
+    },
+    assignedCallers: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: 'gcAgent',
+        }
+    ]
+}, { timestamps: true });
+exports.default = mongoose_1.default.model('Order', OrderSchema);

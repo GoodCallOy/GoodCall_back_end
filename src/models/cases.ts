@@ -24,6 +24,6 @@ const casesSchema: Schema<ICases> = new Schema<ICases>({
     },
 });
 
-const Cases: Model<ICases> = mongoose.model<ICases>('Cases', casesSchema);
+const Cases: Model<ICases> = mongoose.model<ICases>('cases', casesSchema);
 
 export default Cases;

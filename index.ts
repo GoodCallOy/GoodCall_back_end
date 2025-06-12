@@ -8,7 +8,11 @@ import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 
 // Import routers
-import caseRouter from './src/routes/cases';
+
+import caseRouter from './src/routes/caseRoutes';
+import gcAgentRouter from './src/routes/agentRoutes';
+import orderRouter from './src/routes/orderRoutes';
+import casesRouter from './src/routes/cases';
 import testRouter from './src/routes/tests';
 import agentStatsRouter from './src/routes/agentStats';
 import agentCaseInfoRouter from './src/routes/agentCaseInfo';
@@ -81,8 +85,11 @@ app.use("/api/v1/test", testRouter);
 app.use('/api/v1/agentstats', agentStatsRouter);
 app.use('/api/v1/agentCaseInfo', agentCaseInfoRouter);
 app.use('/api/v1/agent', agentRouter);
-app.use('/api/v1/cases', caseRouter);
+app.use('/api/v1/cases', casesRouter);
 app.use('/api/v1/agentgoals', agentGoalsRouter);
+app.use('/api/v1/gcCases', caseRouter);
+app.use('/api/v1/gcAgents', gcAgentRouter);
+app.use('/api/v1/orders', orderRouter);
 
 
 app.use("/api/v1/user", userRoutes);

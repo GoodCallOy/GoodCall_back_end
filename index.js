@@ -12,6 +12,9 @@ const dbConnection_1 = __importDefault(require("./src/db/dbConnection"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // Import routers
+const caseRoutes_1 = __importDefault(require("./src/routes/caseRoutes"));
+const agentRoutes_1 = __importDefault(require("./src/routes/agentRoutes"));
+const orderRoutes_1 = __importDefault(require("./src/routes/orderRoutes"));
 const cases_1 = __importDefault(require("./src/routes/cases"));
 const tests_1 = __importDefault(require("./src/routes/tests"));
 const agentStats_1 = __importDefault(require("./src/routes/agentStats"));
@@ -71,6 +74,9 @@ app.use('/api/v1/agentCaseInfo', agentCaseInfo_1.default);
 app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
 app.use('/api/v1/agentgoals', agentGoals_1.default);
+app.use('/api/v1/gcCases', caseRoutes_1.default);
+app.use('/api/v1/gcAgents', agentRoutes_1.default);
+app.use('/api/v1/orders', orderRoutes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
 app.listen(serverConfig_json_1.port, () => {
