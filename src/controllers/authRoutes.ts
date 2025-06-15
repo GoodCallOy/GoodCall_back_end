@@ -71,7 +71,7 @@ export const getCallback = [
       
       // Generate JWT token
       const JWTtoken = jwt.sign(
-        { id: user._id, email: user.email },
+        { id: user._id, email: user.email, avatar: user.avatar },
         process.env.JWT_SECRET!,
         { expiresIn: '7d' }
       )
@@ -96,18 +96,7 @@ export const testAuth = (req: Request, res: Response) => {
     console.log('🔵 Auth test route hit')
     res.json({ message: 'Auth route works' })
 }
-
-// export const isAuthenticated = (req: Request, res: Response) => {
-//     console.log('🔒 Checking authentication status', req.isAuthenticated());
-//     console.log('🔍 Session:', req.session); // Log session data
-//     console.log('👤 Current user:', req.user);
-//     if (req.isAuthenticated()) {
-//         console.log('✅ User is authenticated:', req.user);
-//       return res.json(req.user); // Passport attaches user here
-//     }
-//     return res.status(401).json({ message: 'Not authenticated' });
-//   };
-  export const isAuthenticated = (req: Request, res: Response) => {
+export const isAuthenticated = (req: Request, res: Response) => {
   const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({ message: 'Not authenticated' });

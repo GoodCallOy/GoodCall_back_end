@@ -55,7 +55,7 @@ exports.getCallback = [
         console.log('🔑 User authenticated successfully');
         const user = req.user; // CustomUser type should be your user interface
         // Generate JWT token
-        const JWTtoken = jsonwebtoken_1.default.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const JWTtoken = jsonwebtoken_1.default.sign({ id: user._id, email: user.email, avatar: user.avatar }, process.env.JWT_SECRET, { expiresIn: '7d' });
         console.log('✅ Google authentication successful, issuing token...', JWTtoken);
         // Set the JWT token in an HTTP-only cookie
         res.cookie('token', JWTtoken, {
@@ -74,16 +74,6 @@ const testAuth = (req, res) => {
     res.json({ message: 'Auth route works' });
 };
 exports.testAuth = testAuth;
-// export const isAuthenticated = (req: Request, res: Response) => {
-//     console.log('🔒 Checking authentication status', req.isAuthenticated());
-//     console.log('🔍 Session:', req.session); // Log session data
-//     console.log('👤 Current user:', req.user);
-//     if (req.isAuthenticated()) {
-//         console.log('✅ User is authenticated:', req.user);
-//       return res.json(req.user); // Passport attaches user here
-//     }
-//     return res.status(401).json({ message: 'Not authenticated' });
-//   };
 const isAuthenticated = (req, res) => {
     const token = req.cookies.token;
     if (!token) {
