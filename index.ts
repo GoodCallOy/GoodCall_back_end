@@ -6,6 +6,8 @@ import passport from "./src/auth/passport";
 import connectDB from './src/db/dbConnection';
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
+import https from 'https';
+import fs from 'fs';
 
 // Import routers
 
@@ -29,6 +31,13 @@ connectDB();
 
 const app = express();
 
+const sslOptions = {
+  key: fs.readFileSync('C:\\Users\\j_dan\\server.key'),
+  cert: fs.readFileSync('C:\\Users\\j_dan\\server.cert'),
+};
+
+
+
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true })) // Parse URL-encoded bodies
 
@@ -39,7 +48,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Set to true in production to use HTTPS
+      secure: true, // Use secure cookies in production
       sameSite: 'none', // Allow cross-origin cookies
       httpOnly: true, // Prevent JavaScript from accessing the cookie
       maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
@@ -54,7 +63,7 @@ app.use(
 app.use(
   cors({
     origin: [
-      "http://localhost:8080",
+      "https://localhost:8080",
       "https://goodcall.fi",
       "https://goodcall-front-end.onrender.com"
     ],
@@ -95,6 +104,7 @@ app.use('/api/v1/orders', orderRouter);
 app.use("/api/v1/user", userRoutes);
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}...`);
+
+https.createServer(sslOptions, app).listen(port, () => {
+  console.log(`HTTPS server is listening on https://localhost:${port}...`);
 });

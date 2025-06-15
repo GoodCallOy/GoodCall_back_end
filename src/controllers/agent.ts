@@ -4,7 +4,6 @@ import IAgent from "../types/IAgentStats";
 export const getAllAgents = async (req: Request, res: Response) => {
   try {
     const allAgents = await Agent.find();
-
     res.status(200).json(allAgents);
   } catch (err: any) {
     res.status(400).json({

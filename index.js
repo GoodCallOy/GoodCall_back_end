@@ -11,6 +11,8 @@ const passport_1 = __importDefault(require("./src/auth/passport"));
 const dbConnection_1 = __importDefault(require("./src/db/dbConnection"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const https_1 = __importDefault(require("https"));
+const fs_1 = __importDefault(require("fs"));
 // Import routers
 const caseRoutes_1 = __importDefault(require("./src/routes/caseRoutes"));
 const agentRoutes_1 = __importDefault(require("./src/routes/agentRoutes"));
@@ -28,6 +30,10 @@ dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
 const app = (0, express_1.default)();
+const sslOptions = {
+    key: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.key'),
+    cert: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.cert'),
+};
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // Session middleware
@@ -36,7 +42,7 @@ app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Set to true in production to use HTTPS
+        secure: true, // Use secure cookies in production
         sameSite: 'none', // Allow cross-origin cookies
         httpOnly: true, // Prevent JavaScript from accessing the cookie
         maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
@@ -48,7 +54,7 @@ app.use((0, express_session_1.default)({
 }));
 app.use((0, cors_1.default)({
     origin: [
-        "http://localhost:8080",
+        "https://localhost:8080",
         "https://goodcall.fi",
         "https://goodcall-front-end.onrender.com"
     ],
@@ -79,6 +85,6 @@ app.use('/api/v1/gcAgents', agentRoutes_1.default);
 app.use('/api/v1/orders', orderRoutes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
-app.listen(serverConfig_json_1.port, () => {
-    console.log(`Server is listening on port ${serverConfig_json_1.port}...`);
+https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {
+    console.log(`HTTPS server is listening on https://localhost:${serverConfig_json_1.port}...`);
 });

@@ -15,7 +15,7 @@ interface CustomUser {
 const CLIENT_URL =
   process.env.NODE_ENV === 'production'
     ? 'https://goodcall-front-end.onrender.com/#/dashboard'
-    : 'http://localhost:8080/#/dashboard'
+    : 'https://localhost:8080/#/dashboard'
 
 // ✅ Logout Function
 export const logoutUser = (req: Request, res: Response) => {
@@ -81,8 +81,8 @@ export const getCallback = [
       // Set the JWT token in an HTTP-only cookie
       res.cookie('token', JWTtoken, {
         httpOnly: true, // This ensures the cookie cannot be accessed via JavaScript
-        secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-        sameSite: 'none', // Required for cross-site cookies (can be 'lax' or 'strict' depending on your needs)
+        secure: false, // Ensure the cookie is sent over HTTPS only in production
+        sameSite: 'lax', // Required for cross-site cookies (can be 'lax' or 'strict' depending on your needs)
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
       })
   
@@ -97,13 +97,26 @@ export const testAuth = (req: Request, res: Response) => {
     res.json({ message: 'Auth route works' })
 }
 
-export const isAuthenticated = (req: Request, res: Response) => {
-    console.log('🔒 Checking authentication status', req.isAuthenticated());
-    console.log('🔍 Session:', req.session); // Log session data
-    console.log('👤 Current user:', req.user);
-    if (req.isAuthenticated()) {
-        console.log('✅ User is authenticated:', req.user);
-      return res.json(req.user); // Passport attaches user here
-    }
+// export const isAuthenticated = (req: Request, res: Response) => {
+//     console.log('🔒 Checking authentication status', req.isAuthenticated());
+//     console.log('🔍 Session:', req.session); // Log session data
+//     console.log('👤 Current user:', req.user);
+//     if (req.isAuthenticated()) {
+//         console.log('✅ User is authenticated:', req.user);
+//       return res.json(req.user); // Passport attaches user here
+//     }
+//     return res.status(401).json({ message: 'Not authenticated' });
+//   };
+  export const isAuthenticated = (req: Request, res: Response) => {
+  const token = req.cookies.token;
+  if (!token) {
     return res.status(401).json({ message: 'Not authenticated' });
-  };
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    // Optionally, fetch user from DB here if you want more info
+    return res.json({ user: decoded });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
