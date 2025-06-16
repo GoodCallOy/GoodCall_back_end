@@ -24,14 +24,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const OrderSchema = new mongoose_1.Schema({
-    caseId: {
+const DailyLogSchema = new mongoose_1.Schema({
+    agentId: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Case',
+        ref: 'gcAgent',
         required: true
     },
-    caseName: {
-        type: String, // <- add this
+    agentName: {
+        type: String,
+        required: true
+    },
+    orderId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Order',
+        required: true
+    },
+    orderName: {
+        type: String,
         required: true
     },
     goalType: {
@@ -39,28 +48,33 @@ const OrderSchema = new mongoose_1.Schema({
         enum: ['hours', 'interviews', 'meetings'],
         required: true
     },
-    totalQuantity: {
+    call_time: {
         type: Number,
         required: true
     },
-    deadline: {
+    completed_calls: {
+        type: Number,
+        required: true
+    },
+    outgoing_calls: {
+        type: Number,
+        required: true
+    },
+    answered_calls: {
+        type: Number,
+        required: true
+    },
+    response_rate: {
+        type: Number,
+        required: true
+    },
+    date: {
         type: Date,
         required: true
     },
-    orderStatus: {
-        type: String,
-        enum: ['pending', 'in-progress', 'completed', 'cancelled', 'on-hold'],
-        required: true
-    },
-    estimatedRevenue: {
+    quantityCompleted: {
         type: Number,
         required: true
-    },
-    assignedCallers: [
-        {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'gcAgent',
-        }
-    ]
+    }
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('Order', OrderSchema);
+exports.default = mongoose_1.default.model('DailyLog', DailyLogSchema);

@@ -26,6 +26,7 @@ const agentGoals_1 = __importDefault(require("./src/routes/agentGoals"));
 const authRoutes_1 = __importDefault(require("./src/routes/authRoutes"));
 const user_1 = __importDefault(require("./src/routes/user"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const dailyLogRoutes_1 = __importDefault(require("./src/routes/dailyLogRoutes"));
 dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
@@ -83,6 +84,7 @@ app.use('/api/v1/agentgoals', agentGoals_1.default);
 app.use('/api/v1/gcCases', caseRoutes_1.default);
 app.use('/api/v1/gcAgents', agentRoutes_1.default);
 app.use('/api/v1/orders', orderRoutes_1.default);
+app.use('/api/v1/dailyLogs', dailyLogRoutes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
 https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {

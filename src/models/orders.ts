@@ -5,6 +5,7 @@ export type OrderStatus = 'pending' | 'in-progress' | 'completed' | 'cancelled' 
 
 export interface IOrder extends Document {
   caseId: Types.ObjectId
+  caseName: string 
   goalType: GoalType
   totalQuantity: number
   deadline: Date
@@ -20,6 +21,10 @@ const OrderSchema: Schema = new Schema<IOrder>(
     caseId: {
       type: Schema.Types.ObjectId,
       ref: 'Case',
+      required: true
+    },
+    caseName: {
+      type: String, // <- add this
       required: true
     },
     goalType: {

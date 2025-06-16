@@ -8,7 +8,8 @@ const orders_1 = __importDefault(require("../models/orders"));
 // Get all orders
 const getAllOrders = async (req, res) => {
     try {
-        const orders = await orders_1.default.find().populate('caseId').populate('assignedCallers');
+        const orders = await orders_1.default.find();
+        console.log('Fetched orders:', orders);
         res.status(200).json(orders);
     }
     catch (err) {
@@ -38,6 +39,7 @@ const createOrder = async (req, res) => {
         console.log('Creating order with data:', req.body);
         const newOrder = new orders_1.default({
             caseId: req.body.caseId,
+            caseName: req.body.caseName,
             goalType: req.body.goalType,
             totalQuantity: req.body.totalQuantity,
             deadline: req.body.deadline,

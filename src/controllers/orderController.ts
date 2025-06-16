@@ -4,7 +4,8 @@ import Order from '../models/orders'
 // Get all orders
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find().populate('caseId').populate('assignedCallers')
+    const orders = await Order.find()
+    console.log('Fetched orders:', orders)
     res.status(200).json(orders)
   } catch (err: any) {
     res.status(400).json({ message: err.message })
@@ -32,6 +33,7 @@ export const createOrder = async (req: Request, res: Response) => {
     console.log('Creating order with data:', req.body)
     const newOrder = new Order({
       caseId: req.body.caseId,
+      caseName: req.body.caseName,
       goalType: req.body.goalType,
       totalQuantity: req.body.totalQuantity,
       deadline: req.body.deadline,

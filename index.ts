@@ -23,6 +23,7 @@ import agentGoalsRouter from './src/routes/agentGoals';
 import authRoutes from "./src/routes/authRoutes";
 import userRoutes from "./src/routes/user";
 import cookieParser from 'cookie-parser'
+import dailyLogRoutes from './src/routes/dailyLogRoutes'
 
 dotenv.config();
 
@@ -99,6 +100,7 @@ app.use('/api/v1/agentgoals', agentGoalsRouter);
 app.use('/api/v1/gcCases', caseRouter);
 app.use('/api/v1/gcAgents', gcAgentRouter);
 app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/dailyLogs', dailyLogRoutes)
 
 
 app.use("/api/v1/user", userRoutes);
