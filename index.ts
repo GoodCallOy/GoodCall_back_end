@@ -32,11 +32,6 @@ connectDB();
 
 const app = express();
 
-const sslOptions = {
-  key: fs.readFileSync('C:\\Users\\j_dan\\server.key'),
-  cert: fs.readFileSync('C:\\Users\\j_dan\\server.cert'),
-};
-
 
 
 app.use(cookieParser())
@@ -106,7 +101,17 @@ app.use('/api/v1/dailyLogs', dailyLogRoutes)
 app.use("/api/v1/user", userRoutes);
 
 // Start the server
+if (process.env.NODE_ENV === 'development') {
+  const sslOptions = {
+    key: fs.readFileSync('C:\\Users\\j_dan\\server.key'),
+    cert: fs.readFileSync('C:\\Users\\j_dan\\server.cert'),
+  };
 
-https.createServer(sslOptions, app).listen(port, () => {
-  console.log(`HTTPS server is listening on https://localhost:${port}...`);
-});
+  https.createServer(sslOptions, app).listen(port, () => {
+    console.log(`HTTPS server is listening on https://localhost:${port}...`);
+  });
+} else {
+  app.listen(port, () => {
+    console.log(`HTTP server is listening on http://localhost:${port}...`);
+  });
+}

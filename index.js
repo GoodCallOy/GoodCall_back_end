@@ -31,10 +31,6 @@ dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
 const app = (0, express_1.default)();
-const sslOptions = {
-    key: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.key'),
-    cert: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.cert'),
-};
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // Session middleware
@@ -87,6 +83,17 @@ app.use('/api/v1/orders', orderRoutes_1.default);
 app.use('/api/v1/dailyLogs', dailyLogRoutes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
-https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {
-    console.log(`HTTPS server is listening on https://localhost:${serverConfig_json_1.port}...`);
-});
+if (process.env.NODE_ENV === 'development') {
+    const sslOptions = {
+        key: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.key'),
+        cert: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.cert'),
+    };
+    https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {
+        console.log(`HTTPS server is listening on https://localhost:${serverConfig_json_1.port}...`);
+    });
+}
+else {
+    app.listen(serverConfig_json_1.port, () => {
+        console.log(`HTTP server is listening on http://localhost:${serverConfig_json_1.port}...`);
+    });
+}
