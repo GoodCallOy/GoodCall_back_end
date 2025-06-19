@@ -24,13 +24,13 @@ export const getLogsByAgentId = async (req: Request, res: Response) => {
 // Add a new daily log
 export const addDailyLog = async (req: Request, res: Response) => {
   try {
-    const { agentId, agentName, orderId, orderName, goalType, call_time, completed_calls, outgoing_calls, answered_calls, response_rate, date, quantityCompleted,  } = req.body
-    console.log('Adding daily log with data:', req.body)
+    const { agentId, agentName, orderId, caseName, goalType, call_time, completed_calls, outgoing_calls, answered_calls, response_rate, date, quantityCompleted,  } = req.body
+    console.log('dailylog data:', req.body)
     const newLog = new DailyLog({
       agentId,
       agentName,
       orderId,
-      orderName,
+      caseName,
       goalType,
       call_time: call_time || 0,
       completed_calls: completed_calls || 0,
@@ -40,10 +40,12 @@ export const addDailyLog = async (req: Request, res: Response) => {
       date: date || new Date(),
       quantityCompleted: quantityCompleted || 0
     })
-    console.log('Adding new daily log:', newLog)
+    
     const savedLog = await newLog.save()
+    console.log('Adding new daily log:', newLog)
     res.status(201).json({ message: 'Daily log saved', log: savedLog })
   } catch (err) {
+    console.error('Error saving daily log:', err);
     res.status(400).json({ message: 'Failed to add log', error: err })
   }
 }

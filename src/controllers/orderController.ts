@@ -14,17 +14,13 @@ export const getAllOrders = async (req: Request, res: Response) => {
 
 // Get order by ID
 export const getOrderById = async (req: Request, res: Response) => {
-  const orderId = req.params.id
   try {
-    const order = await Order.findById(orderId).populate('caseId').populate('assignedCallers')
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found' })
+      const order = await Order.findById(req.params.id)
+      if (!order) return res.status(404).json({ message: 'order not found' })
+      res.json(order)
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to fetch order', error: err })
     }
-    res.status(200).json(order)
-  } catch (err: any) {
-    console.error(err)
-    res.status(500).json({ error: 'Internal server error' })
-  }
 }
 
 // Create a new order

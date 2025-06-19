@@ -39,7 +39,7 @@ const DailyLogSchema = new mongoose_1.Schema({
         ref: 'Order',
         required: true
     },
-    orderName: {
+    caseName: {
         type: String,
         required: true
     },

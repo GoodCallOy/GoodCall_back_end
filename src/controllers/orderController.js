@@ -19,17 +19,14 @@ const getAllOrders = async (req, res) => {
 exports.getAllOrders = getAllOrders;
 // Get order by ID
 const getOrderById = async (req, res) => {
-    const orderId = req.params.id;
     try {
-        const order = await orders_1.default.findById(orderId).populate('caseId').populate('assignedCallers');
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found' });
-        }
-        res.status(200).json(order);
+        const order = await orders_1.default.findById(req.params.id);
+        if (!order)
+            return res.status(404).json({ message: 'order not found' });
+        res.json(order);
     }
     catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ message: 'Failed to fetch order', error: err });
     }
 };
 exports.getOrderById = getOrderById;

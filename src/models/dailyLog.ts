@@ -4,7 +4,7 @@ export interface IDailyLog extends Document {
   agentId: Types.ObjectId
   agentName: string 
   orderId: Types.ObjectId
-  orderName: string
+  caseName: string
   goalType: string
   call_time: number;
   completed_calls: number;
@@ -31,7 +31,7 @@ const DailyLogSchema: Schema = new Schema<IDailyLog>(
       ref: 'Order',
       required: true
     },
-    orderName: {
+    caseName: {
       type: String,
       required: true
     },
