@@ -34,9 +34,13 @@ const OrderSchema = new mongoose_1.Schema({
         type: String, // <- add this
         required: true
     },
-    goalType: {
+    caseUnit: {
         type: String,
         enum: ['hours', 'interviews', 'meetings'],
+        required: true
+    },
+    pricePerUnit: {
+        type: Number,
         required: true
     },
     totalQuantity: {

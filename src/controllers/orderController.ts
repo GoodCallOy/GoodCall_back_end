@@ -30,7 +30,8 @@ export const createOrder = async (req: Request, res: Response) => {
     const newOrder = new Order({
       caseId: req.body.caseId,
       caseName: req.body.caseName,
-      goalType: req.body.goalType,
+      caseUnit: req.body.caseUnit,
+      pricePerUnit: req.body.pricePerUnit,
       totalQuantity: req.body.totalQuantity,
       deadline: req.body.deadline,
       orderStatus: req.body.orderStatus || 'pending',

@@ -37,7 +37,8 @@ const createOrder = async (req, res) => {
         const newOrder = new orders_1.default({
             caseId: req.body.caseId,
             caseName: req.body.caseName,
-            goalType: req.body.goalType,
+            caseUnit: req.body.caseUnit,
+            pricePerUnit: req.body.pricePerUnit,
             totalQuantity: req.body.totalQuantity,
             deadline: req.body.deadline,
             orderStatus: req.body.orderStatus || 'pending',

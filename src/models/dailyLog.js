@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const DailyLogSchema = new mongoose_1.Schema({
-    agentId: {
+    agent: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'gcAgent',
         required: true
@@ -34,7 +34,7 @@ const DailyLogSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    orderId: {
+    order: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Order',
         required: true
@@ -43,7 +43,7 @@ const DailyLogSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    goalType: {
+    caseUnit: {
         type: String,
         enum: ['hours', 'interviews', 'meetings'],
         required: true

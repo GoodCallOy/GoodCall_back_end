@@ -24,7 +24,7 @@ export const getOrderProgress = async (req: Request, res: Response) => {
 
     for (const caller of order.assignedCallers as any) {
       const agentId = caller._id.toString()
-      const agentLogs = logs.filter(log => log.agentId.toString() === agentId)
+      const agentLogs = logs.filter(log => log.agent.toString() === agentId)
        const agentName = caller.name;
 
       const dailyBreakdown = agentLogs.map(log => ({
@@ -46,7 +46,7 @@ export const getOrderProgress = async (req: Request, res: Response) => {
 
     res.json({
       orderId: order._id,
-      goalType: order.goalType,
+      caseUnit: order.caseUnit,
       totalQuantity: order.totalQuantity,
       assignedCallers: Array.from(progressMap.values())
     })

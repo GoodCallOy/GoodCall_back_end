@@ -21,7 +21,7 @@ const getOrderProgress = async (req, res) => {
         const progressMap = new Map();
         for (const caller of order.assignedCallers) {
             const agentId = caller._id.toString();
-            const agentLogs = logs.filter(log => log.agentId.toString() === agentId);
+            const agentLogs = logs.filter(log => log.agent.toString() === agentId);
             const agentName = caller.name;
             const dailyBreakdown = agentLogs.map(log => ({
                 date: log.date.toISOString().split('T')[0],
@@ -39,7 +39,7 @@ const getOrderProgress = async (req, res) => {
         }
         res.json({
             orderId: order._id,
-            goalType: order.goalType,
+            caseUnit: order.caseUnit,
             totalQuantity: order.totalQuantity,
             assignedCallers: Array.from(progressMap.values())
         });

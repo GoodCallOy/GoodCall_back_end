@@ -8,7 +8,7 @@ const dailyLog_1 = __importDefault(require("../models/dailyLog"));
 // Get all daily logs
 const getAllDailyLogs = async (_req, res) => {
     try {
-        const logs = await dailyLog_1.default.find().populate('agentId').populate('orderId');
+        const logs = await dailyLog_1.default.find().populate('agent').populate('order');
         res.status(200).json(logs);
     }
     catch (err) {
@@ -30,14 +30,14 @@ exports.getLogsByAgentId = getLogsByAgentId;
 // Add a new daily log
 const addDailyLog = async (req, res) => {
     try {
-        const { agentId, agentName, orderId, caseName, goalType, call_time, completed_calls, outgoing_calls, answered_calls, response_rate, date, quantityCompleted, } = req.body;
+        const { agent, agentName, order, caseName, caseUnit, call_time, completed_calls, outgoing_calls, answered_calls, response_rate, date, quantityCompleted, } = req.body;
         console.log('dailylog data:', req.body);
         const newLog = new dailyLog_1.default({
-            agentId,
+            agent,
             agentName,
-            orderId,
+            order,
             caseName,
-            goalType,
+            caseUnit,
             call_time: call_time || 0,
             completed_calls: completed_calls || 0,
             outgoing_calls: outgoing_calls || 0,

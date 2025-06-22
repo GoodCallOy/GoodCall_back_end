@@ -1,12 +1,13 @@
 import mongoose, { Schema, Document, Types } from 'mongoose'
 
-export type GoalType = 'hours' | 'interviews' | 'meetings'
+export type caseUnit = 'hours' | 'interviews' | 'meetings'
 export type OrderStatus = 'pending' | 'in-progress' | 'completed' | 'cancelled' | 'on-hold'
 
 export interface IOrder extends Document {
   caseId: Types.ObjectId
   caseName: string 
-  goalType: GoalType
+  caseUnit: caseUnit
+  pricePerUnit: number
   totalQuantity: number
   deadline: Date
   orderStatus: OrderStatus
@@ -27,10 +28,14 @@ const OrderSchema: Schema = new Schema<IOrder>(
       type: String, // <- add this
       required: true
     },
-    goalType: {
+    caseUnit: {
       type: String,
       enum: ['hours', 'interviews', 'meetings'],
       required: true
+    },
+    pricePerUnit: {
+      type: Number,
+      required: true 
     },
     totalQuantity: {
       type: Number,

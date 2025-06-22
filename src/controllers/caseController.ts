@@ -33,7 +33,7 @@ export const addCase = async (req: Request, res: Response) => {
     })
 
     await newCase.save()
-    res.status(200).json({ message: '1. Case added successfully', case: newCase })
+    res.status(200).json({ message: 'GC Case added successfully', case: newCase })
   } catch (err: any) {
     res.status(400).json({ message: err.message })
   }

@@ -1,11 +1,11 @@
 import mongoose, { Schema, Document, Types } from 'mongoose'
 
 export interface IDailyLog extends Document {
-  agentId: Types.ObjectId
+  agent: Types.ObjectId
   agentName: string 
-  orderId: Types.ObjectId
+  order: Types.ObjectId
   caseName: string
-  goalType: string
+  caseUnit: string
   call_time: number;
   completed_calls: number;
   outgoing_calls: number;
@@ -17,7 +17,7 @@ export interface IDailyLog extends Document {
 
 const DailyLogSchema: Schema = new Schema<IDailyLog>(
   {
-    agentId: {
+    agent: {
       type: Schema.Types.ObjectId,
       ref: 'gcAgent',
       required: true
@@ -26,7 +26,7 @@ const DailyLogSchema: Schema = new Schema<IDailyLog>(
       type: String,
       required: true
     },
-    orderId: {
+    order: {
       type: Schema.Types.ObjectId,
       ref: 'Order',
       required: true
@@ -35,7 +35,7 @@ const DailyLogSchema: Schema = new Schema<IDailyLog>(
       type: String,
       required: true
     },
-    goalType: {
+    caseUnit: {
       type: String,
       enum: ['hours', 'interviews', 'meetings'],
       required: true
