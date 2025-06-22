@@ -36,7 +36,9 @@ export const createOrder = async (req: Request, res: Response) => {
       deadline: req.body.deadline,
       orderStatus: req.body.orderStatus || 'pending',
       estimatedRevenue: req.body.estimatedRevenue,
-      assignedCallers: req.body.assignedCallers || []
+      assignedCallers: req.body.assignedCallers || [],
+      agentGoals: req.body.agentGoals || {} 
+
     })
 
     await newOrder.save()

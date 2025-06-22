@@ -60,6 +60,10 @@ const OrderSchema = new mongoose_1.Schema({
         type: Number,
         required: true
     },
+    agentGoals: {
+        type: Object, // or Map, or Mixed, depending on your needs
+        default: {}
+    },
     assignedCallers: [
         {
             type: mongoose_1.Schema.Types.ObjectId,

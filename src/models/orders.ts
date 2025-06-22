@@ -13,6 +13,7 @@ export interface IOrder extends Document {
   orderStatus: OrderStatus
   estimatedRevenue: number
   assignedCallers: Types.ObjectId[]
+  agentGoals: Record<string, number> 
   createdAt: Date
   updatedAt: Date
 }
@@ -53,6 +54,10 @@ const OrderSchema: Schema = new Schema<IOrder>(
     estimatedRevenue: {
       type: Number,
       required: true
+    },
+    agentGoals: {
+      type: Object, // or Map, or Mixed, depending on your needs
+      default: {}
     },
     assignedCallers: [
       {
