@@ -10,6 +10,8 @@ const router = express_1.default.Router();
 router.get('/', dailyLogController_1.getAllDailyLogs);
 // GET /api/daily-logs/agent/:agentId - Get logs by agent ID
 router.get('/agent/:agentId', dailyLogController_1.getLogsByAgentId);
+// GET /api/daily-logs/:caseName - Get logs by case name
+router.get('/:caseName', dailyLogController_1.getLogsByCase);
 // POST /api/daily-logs - Create a new log
 router.post('/', dailyLogController_1.addDailyLog);
 // PUT /api/daily-logs/:id - Update a log

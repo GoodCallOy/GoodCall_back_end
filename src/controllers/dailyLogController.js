@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDailyLog = exports.updateDailyLog = exports.addDailyLog = exports.getLogsByAgentId = exports.getAllDailyLogs = void 0;
+exports.deleteDailyLog = exports.updateDailyLog = exports.addDailyLog = exports.getLogsByCase = exports.getLogsByAgentId = exports.getAllDailyLogs = void 0;
 const dailyLog_1 = __importDefault(require("../models/dailyLog"));
 // Get all daily logs
 const getAllDailyLogs = async (_req, res) => {
@@ -27,6 +27,31 @@ const getLogsByAgentId = async (req, res) => {
     }
 };
 exports.getLogsByAgentId = getLogsByAgentId;
+// Example for MongoDB/Mongoose
+const getLogsByCase = async (req, res) => {
+    const { caseName } = req.params;
+    const { year, month } = req.query;
+    const yearNum = typeof year === 'string' ? parseInt(year, 10) : undefined;
+    const monthNum = typeof month === 'string' ? parseInt(month, 10) : undefined;
+    // Build date range for the month
+    let dateFilter = {};
+    if (typeof yearNum === 'number' && !isNaN(yearNum) && typeof monthNum === 'number' && !isNaN(monthNum)) {
+        const start = new Date(yearNum, monthNum - 1, 1); // JS months are 0-based
+        const end = new Date(yearNum, monthNum, 1);
+        dateFilter = { date: { $gte: start, $lt: end } };
+    }
+    try {
+        const logs = await dailyLog_1.default.find({
+            caseName,
+            ...dateFilter,
+        });
+        res.json(logs);
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Failed to find log', error: err });
+    }
+};
+exports.getLogsByCase = getLogsByCase;
 // Add a new daily log
 const addDailyLog = async (req, res) => {
     try {
