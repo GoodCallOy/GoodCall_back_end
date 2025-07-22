@@ -81,8 +81,8 @@ export const getCallback = [
       // Set the JWT token in an HTTP-only cookie
       res.cookie('token', JWTtoken, {
         httpOnly: true, // This ensures the cookie cannot be accessed via JavaScript
-        secure: false, // Ensure the cookie is sent over HTTPS only in production
-        sameSite: 'lax', // Required for cross-site cookies (can be 'lax' or 'strict' depending on your needs)
+        secure: true, // Ensure the cookie is sent over HTTPS only in production
+        sameSite: 'none', // Required for cross-site cookies (can be 'lax' or 'strict' depending on your needs)
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
       })
   
