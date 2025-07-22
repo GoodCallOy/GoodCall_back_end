@@ -67,7 +67,14 @@ app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    res.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https://goodcall-back-end.onrender.com;");
+    res.setHeader('Content-Security-Policy', [
+        "default-src 'self'",
+        "img-src 'self' data: https://goodcall-back-end.onrender.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com",
+        "script-src 'self'",
+        "connect-src 'self' https://goodcall-back-end.onrender.com",
+    ].join('; '));
     next();
 });
 // Define API 
