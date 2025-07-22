@@ -72,8 +72,8 @@ app.use((req, res, next) => {
         "img-src 'self' data: https://goodcall-back-end.onrender.com",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
-        "script-src 'self'",
-        "connect-src 'self' https://goodcall-back-end.onrender.com",
+        "script-src 'self' https://accounts.google.com",
+        "connect-src 'self' https://goodcall-back-end.onrender.com https://www.googleapis.com https://accounts.google.com",
     ].join('; '));
     next();
 });
