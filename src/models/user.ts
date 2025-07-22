@@ -3,7 +3,6 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import IUser from "../types/IUser"; // Correctly import IUser
 
 const UserSchema = new Schema<IUser>({
-  id: { type: String, required: true },
   googleId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   email: { type: String, unique: true },
