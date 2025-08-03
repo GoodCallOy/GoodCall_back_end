@@ -47,6 +47,10 @@ const OrderSchema = new mongoose_1.Schema({
         type: Number,
         required: true
     },
+    startDate: {
+        type: Date,
+        required: true
+    },
     deadline: {
         type: Date,
         required: true

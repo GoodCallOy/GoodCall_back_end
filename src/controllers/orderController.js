@@ -40,6 +40,7 @@ const createOrder = async (req, res) => {
             caseUnit: req.body.caseUnit,
             pricePerUnit: req.body.pricePerUnit,
             totalQuantity: req.body.totalQuantity,
+            startDate: req.body.startDate || new Date(), // Default to current date if not provided
             deadline: req.body.deadline,
             orderStatus: req.body.orderStatus || 'pending',
             estimatedRevenue: req.body.estimatedRevenue,

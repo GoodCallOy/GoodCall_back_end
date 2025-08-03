@@ -9,6 +9,7 @@ export interface IOrder extends Document {
   caseUnit: caseUnit
   pricePerUnit: number
   totalQuantity: number
+  startDate: Date 
   deadline: Date
   orderStatus: OrderStatus
   estimatedRevenue: number
@@ -40,6 +41,10 @@ const OrderSchema: Schema = new Schema<IOrder>(
     },
     totalQuantity: {
       type: Number,
+      required: true
+    },
+    startDate: {
+      type: Date,
       required: true
     },
     deadline: {
