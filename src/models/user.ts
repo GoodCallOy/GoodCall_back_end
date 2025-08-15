@@ -7,7 +7,8 @@ const UserSchema = new Schema<IUser>({
   name: { type: String, required: true },
   email: { type: String, unique: true },
   avatar: { type: String, required: true },
-  access: { type: String }
+  access: { type: String },
+  role: { type: String }
 });
 
 const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema); // Ensure User implements IUser interface

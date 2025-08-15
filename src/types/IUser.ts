@@ -8,6 +8,7 @@ interface IUser extends Document {
     email?: string;
     avatar: string;
     access?: string;
+    role?: string;
 }
 
 export default IUser; // <-- Default export

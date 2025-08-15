@@ -30,7 +30,8 @@ const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, unique: true },
     avatar: { type: String, required: true },
-    access: { type: String }
+    access: { type: String },
+    role: { type: String }
 });
 const User = mongoose_1.default.model("User", UserSchema); // Ensure User implements IUser interface
 exports.default = User;
