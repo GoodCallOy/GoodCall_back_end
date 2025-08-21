@@ -10,6 +10,7 @@ const router = express_1.default.Router();
 router.post('/', orderController_1.createOrder);
 // GET /api/orders - Get all orders
 router.get('/', orderController_1.getAllOrders);
+router.get('/agent-revenue', orderController_1.listAgentOrderRevenues);
 // GET /api/orders/:id - Get a single order by ID
 router.get('/:id', orderController_1.getOrderById);
 // PUT /api/orders/:id - Update an order

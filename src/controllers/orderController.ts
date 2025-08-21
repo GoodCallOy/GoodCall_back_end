@@ -1,11 +1,31 @@
 import { Request, Response } from 'express'
+import { Types } from 'mongoose';
 import Order from '../models/orders'
+import User from '../models/user';
+import gcAgent from '../models/gcAgent';
+
+type AgentOrderRow = {
+  orderId: string;
+  caseId: string;
+  caseName: string;
+  goal: number;
+  pricePerUnit: number;
+  revenue: number;
+  startDate: Date;
+  deadline: Date;
+};
+
+type AgentBucket = {
+  agentId: string;
+  agentName: string;
+  totalRevenue: number;
+  orders: AgentOrderRow[];
+};
 
 // Get all orders
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const orders = await Order.find()
-    console.log('Fetched orders:', orders)
     res.status(200).json(orders)
   } catch (err: any) {
     res.status(400).json({ message: err.message })
@@ -84,3 +104,111 @@ export const deleteOrder = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' })
   }
 }
+
+export async function computeAgentOrderRevenuesGrouped(
+  fromDate: Date,
+  toDate: Date,
+  onlyAgentId?: string
+): Promise<{
+  agents: Array<AgentBucket & { totals: { revenue: number; orders: number } }>;
+}> {
+  const orders = await Order.find({
+    startDate: { $lte: toDate },
+    deadline:  { $gte: fromDate },
+  })
+    .select('caseId caseName pricePerUnit startDate deadline assignedCallers agentGoals')
+    .lean();
+
+  // collect agent ids
+  const agentIdsUsed = new Set<string>();
+  for (const order of orders) {
+    for (const assignedId of (order.assignedCallers ?? [])) {
+      agentIdsUsed.add(String(assignedId));
+    }
+  }
+
+  // fetch names
+  const userDocs = await gcAgent.find({
+    _id: { $in: Array.from(agentIdsUsed).map(id => new Types.ObjectId(id)) },
+  }).select('name firstName lastName').lean();
+
+  const displayNameById = new Map<string, string>(
+    userDocs.map(u => {
+      const displayName =
+        (u as any).name ||
+        [ (u as any).firstName, (u as any).lastName ].filter(Boolean).join(' ') ||
+        '(unknown)';
+      return [ String(u._id), displayName ];
+    })
+  );
+
+  // group
+  const buckets: Record<string, AgentBucket> = {};
+  for (const order of orders) {
+    const pricePerUnit = Number(order.pricePerUnit) || 0;
+    const goalsByAgent = (order.agentGoals ?? {}) as Record<string, unknown>;
+    const assignedAgentIds = (order.assignedCallers ?? []) as Types.ObjectId[];
+
+    for (const assignedId of assignedAgentIds) {
+      const agentId = String(assignedId);
+      if (onlyAgentId && agentId !== onlyAgentId) continue;
+
+      const goalForThisOrder = Number(goalsByAgent[agentId]) || 0;
+      const revenueForThisOrder = goalForThisOrder * pricePerUnit;
+      const agentName = displayNameById.get(agentId) ?? '(unknown)';
+
+      if (!buckets[agentId]) {
+        buckets[agentId] = {
+          agentId,
+          agentName,
+          totalRevenue: 0,
+          orders: [],
+        };
+      }
+
+      buckets[agentId].orders.push({
+        orderId: String(order._id),
+        caseId: String(order.caseId),
+        caseName: order.caseName,
+        goal: goalForThisOrder,
+        pricePerUnit,
+        revenue: revenueForThisOrder,
+        startDate: order.startDate,
+        deadline: order.deadline,
+      });
+
+      buckets[agentId].totalRevenue += revenueForThisOrder;
+    }
+  }
+
+  // shape: attach totals to each agent and sort
+  const agents = Object.values(buckets)
+    .map(a => ({
+      ...a,
+      totals: { revenue: a.totalRevenue, orders: a.orders.length },
+    }))
+    .sort((a, b) => b.totalRevenue - a.totalRevenue);
+
+  return { agents };
+}
+
+
+export const listAgentOrderRevenues = async (req: Request, res: Response) => {
+  try {
+    const { from, to } = req.query as { from?: string; to?: string };
+    if (!from || !to) return res.status(400).json({ error: 'from and to are required (ISO dates)' });
+
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    if (isNaN(+fromDate) || isNaN(+toDate)) return res.status(400).json({ error: 'Invalid date(s)' });
+
+    const onlyAgentId =
+      (req as any)?.gcAgent?.role === 'caller' ? String((req as any).gcAgent._id) : undefined;
+
+    const { agents } = await computeAgentOrderRevenuesGrouped(fromDate, toDate, onlyAgentId);
+    res.status(200).json({ agents });
+  } catch (err: any) {
+    console.error('Error listing agent order revenues:', err?.message || err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

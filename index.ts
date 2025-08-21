@@ -108,7 +108,6 @@ app.use('/api/v1/gcAgents', gcAgentRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/dailyLogs', dailyLogRoutes)
 
-
 app.use("/api/v1/user", userRoutes);
 
 // Start the server
