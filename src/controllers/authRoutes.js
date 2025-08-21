@@ -3,33 +3,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAuthenticated = exports.testAuth = exports.getCallback = exports.login = exports.logoutUser = void 0;
+exports.isAuthenticated = exports.testAuth = exports.getCallback = exports.login = void 0;
+exports.logoutUser = logoutUser;
 const passport_1 = __importDefault(require("passport"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1.default.config();
 const CLIENT_URL = process.env.NODE_ENV === 'production'
-    ? 'https://goodcall-front-end.onrender.com/#/dashboard'
-    : 'https://localhost:8080/#/dashboard';
+    ? 'https://goodcall-front-end.onrender.com/#/post-login'
+    : 'https://localhost:8080/#/post-login';
 // ✅ Logout Function
-const logoutUser = (req, res) => {
-    console.log('🚪 Logout request received');
-    req.logout((err) => {
-        if (err) {
-            console.error('❌ Logout error:', err);
-            return res.status(500).json({ message: 'Error logging out' });
-        }
-        req.session.destroy((err) => {
-            if (err) {
-                return res.status(500).json({ message: 'Session destruction failed' });
-            }
-            res.clearCookie('connect.sid'); // Clear session cookie
-            console.log('✅ Logout successful');
-            res.json({ success: true, message: 'Logged out successfully' });
+function logoutUser(req, res, next) {
+    req.logout(err => {
+        var _a;
+        if (err)
+            return next(err);
+        (_a = req.session) === null || _a === void 0 ? void 0 : _a.destroy(() => {
+            res.clearCookie('connect.sid', {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+                path: '/', // important so it actually clears
+            });
+            return res.sendStatus(204);
         });
     });
-};
-exports.logoutUser = logoutUser;
+}
 // ✅ Google Login Function (Middleware)
 exports.login = [
     (req, res, next) => {

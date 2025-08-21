@@ -32,8 +32,6 @@ connectDB();
 
 const app = express();
 
-
-
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true })) // Parse URL-encoded bodies
 

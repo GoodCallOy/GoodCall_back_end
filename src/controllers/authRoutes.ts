@@ -15,30 +15,24 @@ interface CustomUser {
 
 const CLIENT_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://goodcall-front-end.onrender.com/#/dashboard'
-    : 'https://localhost:8080/#/dashboard'
+    ? 'https://goodcall-front-end.onrender.com/#/post-login'
+    : 'https://localhost:8080/#/post-login'
 
 // ✅ Logout Function
-export const logoutUser = (req: Request, res: Response) => {
-  console.log('🚪 Logout request received')
+export function logoutUser(req: Request, res: Response, next: NextFunction) {
+  req.logout(err => {
+    if (err) return next(err);
 
-  req.logout((err) => {
-    if (err) {
-      console.error('❌ Logout error:', err)
-      return res.status(500).json({ message: 'Error logging out' })
-    }
-
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Session destruction failed' })
-      }
-
-      res.clearCookie('connect.sid') // Clear session cookie
-      console.log('✅ Logout successful')
-
-      res.json({ success: true, message: 'Logged out successfully' })
-    })
-  })
+    req.session?.destroy(() => {
+      res.clearCookie('connect.sid', {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: '/', // important so it actually clears
+      });
+      return res.sendStatus(204);
+    });
+  });
 }
 
 // ✅ Google Login Function (Middleware)
