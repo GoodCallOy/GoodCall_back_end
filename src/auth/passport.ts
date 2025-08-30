@@ -1,7 +1,5 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import mongoose from "mongoose";
-
 import dotenv from "dotenv";
 
 // Load environment variables
@@ -58,7 +56,8 @@ passport.use(
             name: profile.displayName,
             email: profile.emails?.[0].value,
             avatar: profile.photos?.[0].value,
-            role: "caller"
+            role: "caller",
+            agentId: null
           });
 
           console.log('✅ saving user:', user);

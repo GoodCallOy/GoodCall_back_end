@@ -31,7 +31,9 @@ const UserSchema = new mongoose_1.Schema({
     email: { type: String, unique: true },
     avatar: { type: String, required: true },
     access: { type: String },
-    role: { type: String }
-});
+    role: { type: String, enum: ['admin', 'manager', 'caller'], default: 'caller', required: true },
+    // link to your gcAgent record (nullable)
+    agentId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'gcAgent', default: null, index: true },
+}, { timestamps: true });
 const User = mongoose_1.default.model("User", UserSchema); // Ensure User implements IUser interface
 exports.default = User;

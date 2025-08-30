@@ -54,7 +54,7 @@ exports.getCallback = [
         console.log('🔑 User authenticated successfully');
         const user = req.user; // CustomUser type should be your user interface
         // Generate JWT token
-        const JWTtoken = jsonwebtoken_1.default.sign({ id: user._id, email: user.email, avatar: user.avatar, name: user.name, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const JWTtoken = jsonwebtoken_1.default.sign({ id: user._id, email: user.email, avatar: user.avatar, name: user.name, role: user.role, agentId: user.agentId }, process.env.JWT_SECRET, { expiresIn: '7d' });
         console.log('✅ Google authentication successful, issuing token...', JWTtoken);
         // Set the JWT token in an HTTP-only cookie
         res.cookie('token', JWTtoken, {

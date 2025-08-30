@@ -77,6 +77,7 @@ const getAllUsers = async (_req, res) => {
     console.log("🔵 getAllUsers called");
     try {
         const users = await user_1.default.find();
+        console.log("✅ Fetched users:", users);
         res.json(users);
     }
     catch (error) {

@@ -11,6 +11,7 @@ interface CustomUser {
   email: string
   avatar?: string
   role: string
+  agentId?: string | null
 }
 
 const CLIENT_URL =
@@ -66,7 +67,7 @@ export const getCallback = [
       
       // Generate JWT token
       const JWTtoken = jwt.sign(
-        { id: user._id, email: user.email, avatar: user.avatar, name: user.name, role: user.role },
+        { id: user._id, email: user.email, avatar: user.avatar, name: user.name, role: user.role, agentId: user.agentId },
         process.env.JWT_SECRET!,
         { expiresIn: '7d' }
       )
