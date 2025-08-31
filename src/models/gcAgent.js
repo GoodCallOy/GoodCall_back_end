@@ -39,6 +39,11 @@ const gcAgentSchema = new mongoose_1.Schema({
         enum: ['admin', 'caller', 'manager'],
         required: true
     },
+    linkedUserId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
     active: {
         type: Boolean,
         default: true

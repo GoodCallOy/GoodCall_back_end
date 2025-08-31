@@ -12,7 +12,7 @@ import fs from 'fs';
 // Import routers
 
 import caseRouter from './src/routes/caseRoutes';
-import gcAgentRouter from './src/routes/agentRoutes';
+import gcAgentRouter from './src/routes/gcAgentRoutes';
 import orderRouter from './src/routes/orderRoutes';
 import casesRouter from './src/routes/cases';
 import testRouter from './src/routes/tests';

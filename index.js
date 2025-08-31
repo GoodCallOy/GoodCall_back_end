@@ -15,7 +15,7 @@ const https_1 = __importDefault(require("https"));
 const fs_1 = __importDefault(require("fs"));
 // Import routers
 const caseRoutes_1 = __importDefault(require("./src/routes/caseRoutes"));
-const agentRoutes_1 = __importDefault(require("./src/routes/agentRoutes"));
+const gcAgentRoutes_1 = __importDefault(require("./src/routes/gcAgentRoutes"));
 const orderRoutes_1 = __importDefault(require("./src/routes/orderRoutes"));
 const cases_1 = __importDefault(require("./src/routes/cases"));
 const tests_1 = __importDefault(require("./src/routes/tests"));
@@ -86,7 +86,7 @@ app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
 app.use('/api/v1/agentgoals', agentGoals_1.default);
 app.use('/api/v1/gcCases', caseRoutes_1.default);
-app.use('/api/v1/gcAgents', agentRoutes_1.default);
+app.use('/api/v1/gcAgents', gcAgentRoutes_1.default);
 app.use('/api/v1/orders', orderRoutes_1.default);
 app.use('/api/v1/dailyLogs', dailyLogRoutes_1.default);
 app.use("/api/v1/user", user_1.default);

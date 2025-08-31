@@ -1,16 +1,33 @@
 import { Request, Response } from 'express'
+import mongoose, { Types } from 'mongoose';
 import gcAgentModel from '../models/gcAgent'
 
 // Create a new agent
 export const createAgent = async (req: Request, res: Response) => {
+  console.log('REQ BODY:', req.body);
   try {
-    const agent = new gcAgentModel(req.body)
-    await agent.save()
-    res.status(201).json(agent)
+    console.log('REQ BODY2:', req.body, 'linkedUserId type:', typeof req.body?.linkedUserId);
+
+    // Explicitly coerce/cast the id (if provided)
+    const rawId = req.body?.linkedUserId;
+    const castLinked =
+      rawId && Types.ObjectId.isValid(rawId) ? new Types.ObjectId(rawId) : null;
+
+    const agent = await gcAgentModel.create({
+      name:  req.body.name,
+      email: req.body.email,
+      role:  req.body.role,
+      active:req.body.active ?? true,
+      linkedUserId: castLinked,            // <-- assign explicitly
+    });
+
+    console.log('CREATED AGENT:', agent);
+    res.status(201).json(agent);
   } catch (err) {
-    res.status(400).json({ message: 'Failed to create agent', error: err })
+    console.error('CREATE ERROR:', err);
+    res.status(400).json({ message: 'Failed to create agent', error: err });
   }
-}
+};
 
 // Get all agents
 export const getAllAgents = async (_req: Request, res: Response) => {

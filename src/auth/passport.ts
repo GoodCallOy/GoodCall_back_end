@@ -9,25 +9,21 @@ dotenv.config();
 import User from "../models/user";
 // Serialize and Deserialize User
 passport.serializeUser((user: any, done) => {
-  console.log('✅ user to serialize:', user);
-
-  done(null, user._id.toString());
+  const sessionUser = {
+    id: user._id.toString(),
+    role: user.role,
+    name: user.name,
+    email: user.email,
+    avatar: user.avatar,
+    agentId: user.agentId ? user.agentId.toString() : null,
+  };
+  console.log('✅ user serialized:', sessionUser);
+  done(null, sessionUser); // <-- store this in the session
 });
 
-passport.deserializeUser(async (id, done) => {
-  console.log('✅ user deserialize id:', id);
-
-  try {
-    const user = await User.findById(id).exec();
-    console.log('✅ deserializeUser user:', user);
-    if (user) {
-      done(null, user); // Make sure the `user` here conforms to IUser
-    } else {
-      done(new Error("User not found"), null);
-    }
-  } catch (error) {
-    done(error, null);
-  }
+passport.deserializeUser((sessionUser: any, done) => {
+  console.log('🔄 user deserialized:', sessionUser);
+  done(null, sessionUser);
 });
 
 // Google OAuth Strategy

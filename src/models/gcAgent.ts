@@ -6,6 +6,7 @@ export interface IgcAgent extends Document {
   name: string
   email: string
   role: UserRole
+  linkedUserId?: mongoose.Types.ObjectId | null
   active: boolean
   createdAt: Date
 }
@@ -25,6 +26,11 @@ const gcAgentSchema: Schema = new Schema<IgcAgent>(
       type: String,
       enum: ['admin', 'caller', 'manager'],
       required: true
+    },
+    linkedUserId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: null 
     },
     active: {
       type: Boolean,

@@ -12,24 +12,20 @@ dotenv_1.default.config();
 const user_1 = __importDefault(require("../models/user"));
 // Serialize and Deserialize User
 passport_1.default.serializeUser((user, done) => {
-    console.log('✅ user to serialize:', user);
-    done(null, user._id.toString());
+    const sessionUser = {
+        id: user._id.toString(),
+        role: user.role,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        agentId: user.agentId ? user.agentId.toString() : null,
+    };
+    console.log('✅ user serialized:', sessionUser);
+    done(null, sessionUser); // <-- store this in the session
 });
-passport_1.default.deserializeUser(async (id, done) => {
-    console.log('✅ user deserialize id:', id);
-    try {
-        const user = await user_1.default.findById(id).exec();
-        console.log('✅ deserializeUser user:', user);
-        if (user) {
-            done(null, user); // Make sure the `user` here conforms to IUser
-        }
-        else {
-            done(new Error("User not found"), null);
-        }
-    }
-    catch (error) {
-        done(error, null);
-    }
+passport_1.default.deserializeUser((sessionUser, done) => {
+    console.log('🔄 user deserialized:', sessionUser);
+    done(null, sessionUser);
 });
 // Google OAuth Strategy
 const CLIENT_URL = process.env.NODE_ENV === 'production'
