@@ -15,7 +15,8 @@ passport.serializeUser((user: any, done) => {
     name: user.name,
     email: user.email,
     avatar: user.avatar,
-    agentId: user.agentId ? user.agentId.toString() : null,
+    linkedUserId: user.linkedUserId || null,
+    access: user.access || null
   };
   console.log('✅ user serialized:', sessionUser);
   done(null, sessionUser); // <-- store this in the session
@@ -53,7 +54,7 @@ passport.use(
             email: profile.emails?.[0].value,
             avatar: profile.photos?.[0].value,
             role: "caller",
-            agentId: null
+            linkedUserId: null,
           });
 
           console.log('✅ saving user:', user);

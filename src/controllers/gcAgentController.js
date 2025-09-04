@@ -35,7 +35,6 @@ exports.createAgent = createAgent;
 const getAllAgents = async (_req, res) => {
     try {
         const agents = await gcAgent_1.default.find().sort({ createdAt: -1 });
-        console.log('Fetched gcAgents:', agents);
         res.json(agents);
     }
     catch (err) {

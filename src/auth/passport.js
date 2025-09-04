@@ -18,7 +18,8 @@ passport_1.default.serializeUser((user, done) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        agentId: user.agentId ? user.agentId.toString() : null,
+        linkedUserId: user.linkedUserId || null,
+        access: user.access || null
     };
     console.log('✅ user serialized:', sessionUser);
     done(null, sessionUser); // <-- store this in the session
@@ -47,7 +48,7 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
                 email: (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0].value,
                 avatar: (_b = profile.photos) === null || _b === void 0 ? void 0 : _b[0].value,
                 role: "caller",
-                agentId: null
+                linkedUserId: null,
             });
             console.log('✅ saving user:', user);
             await user.save();

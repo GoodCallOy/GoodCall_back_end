@@ -33,7 +33,6 @@ export const createAgent = async (req: Request, res: Response) => {
 export const getAllAgents = async (_req: Request, res: Response) => {
   try {
     const agents = await gcAgentModel.find().sort({ createdAt: -1 })
-    console.log('Fetched gcAgents:', agents)
     res.json(agents)
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch agents', error: err })

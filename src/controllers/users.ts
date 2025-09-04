@@ -12,15 +12,16 @@ export const getCurrentUser = (req: Request, res: Response) => {
     res.json(req.user);  // Return the authenticated user
   };
 // ✅ Update user data
-export const updatedUser = async (req: AuthRequest, res: Response) => {
+export const updatedUser = async (req: Request, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
   
     try {
       // Type req.body to match the User model fields
+      console.log("🔵 updatedUser called with body:", req.body);
       const updatedUser = await User.findByIdAndUpdate(
-        req.user._id, // req.user should be typed as IUser here
+        (req.body as any)._id, // req.user should be typed as IUser here
         req.body, // Make sure req.body contains the correct fields
         { new: true, runValidators: true }
       );
@@ -28,7 +29,8 @@ export const updatedUser = async (req: AuthRequest, res: Response) => {
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
-  
+
+      console.log("✅ User updated:", updatedUser);
       res.json(updatedUser);
     } catch (error) {
       res.status(500).json({ message: "Error updating user", error });
@@ -67,7 +69,7 @@ export const createUser = async (req: Request, res: Response) => {
     let user = await User.findOne({ googleId });
 
     if (!user) {
-      user = new User({ googleId, name, email, avatar, access });
+      user = new User({ googleId, name, email, avatar, linkedUserId: null, access });
       await user.save();
     }
 

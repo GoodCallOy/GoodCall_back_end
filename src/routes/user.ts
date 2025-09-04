@@ -3,7 +3,8 @@ import {
   getAllUsers,
   createUser,
   getCurrentUser,
-  logoutUser
+  logoutUser,
+  updatedUser
 } from "../controllers/users";
 
 const router = Router();
@@ -12,6 +13,9 @@ const router = Router();
 router.route("/")
   .get(getAllUsers)         // Get all users
   .post(createUser);        // Create a new user
+
+router.route("/:id")
+  .put(updatedUser);        // Update user by ID
 
 // Route to get the currently authenticated user
 router.route("/me")

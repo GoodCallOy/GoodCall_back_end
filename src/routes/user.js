@@ -7,6 +7,8 @@ const router = (0, express_1.Router)();
 router.route("/")
     .get(users_1.getAllUsers) // Get all users
     .post(users_1.createUser); // Create a new user
+router.route("/:id")
+    .put(users_1.updatedUser); // Update user by ID
 // Route to get the currently authenticated user
 router.route("/me")
     .get(users_1.getCurrentUser); // Get current logged-in user

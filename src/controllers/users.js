@@ -22,12 +22,14 @@ const updatedUser = async (req, res) => {
     }
     try {
         // Type req.body to match the User model fields
-        const updatedUser = await user_1.default.findByIdAndUpdate(req.user._id, // req.user should be typed as IUser here
+        console.log("🔵 updatedUser called with body:", req.body);
+        const updatedUser = await user_1.default.findByIdAndUpdate(req.body._id, // req.user should be typed as IUser here
         req.body, // Make sure req.body contains the correct fields
         { new: true, runValidators: true });
         if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });
         }
+        console.log("✅ User updated:", updatedUser);
         res.json(updatedUser);
     }
     catch (error) {
@@ -62,7 +64,7 @@ const createUser = async (req, res) => {
         const { googleId, name, email, avatar, access } = req.body;
         let user = await user_1.default.findOne({ googleId });
         if (!user) {
-            user = new user_1.default({ googleId, name, email, avatar, access });
+            user = new user_1.default({ googleId, name, email, avatar, linkedUserId: null, access });
             await user.save();
         }
         res.status(201).json(user);
