@@ -2,14 +2,12 @@ import { Request, Response } from "express";
 import User from "../models/user";
 import { AuthRequest } from "../types/express"; // Ensure you're using the correct type
 
-export const getCurrentUser = (req: Request, res: Response) => {
+export const getCurrentUser = async (req: Request, res: Response) => {
   console.log("🔵 getCurrentUser called");
-    if (!req.user) {
-      console.log("Not authenticated");
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    console.log("User authenticated");
-    res.json(req.user);  // Return the authenticated user
+     if (!req.user) return res.status(401).json({ message: 'Not authenticated' });
+    const doc = await User.findById((req.user as any).id).lean();
+    if (!doc) return res.status(404).json({ message: 'User not found' });
+    res.json(doc);
   };
 // ✅ Update user data
 export const updatedUser = async (req: Request, res: Response) => {

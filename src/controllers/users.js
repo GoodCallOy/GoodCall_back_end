@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllUsers = exports.createUser = exports.logoutUser = exports.updatedUser = exports.getCurrentUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
-const getCurrentUser = (req, res) => {
+const getCurrentUser = async (req, res) => {
     console.log("🔵 getCurrentUser called");
-    if (!req.user) {
-        console.log("Not authenticated");
-        return res.status(401).json({ message: "Not authenticated" });
-    }
-    console.log("User authenticated");
-    res.json(req.user); // Return the authenticated user
+    if (!req.user)
+        return res.status(401).json({ message: 'Not authenticated' });
+    const doc = await user_1.default.findById(req.user.id).lean();
+    if (!doc)
+        return res.status(404).json({ message: 'User not found' });
+    res.json(doc);
 };
 exports.getCurrentUser = getCurrentUser;
 // ✅ Update user data

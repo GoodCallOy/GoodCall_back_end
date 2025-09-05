@@ -9,14 +9,14 @@ dotenv.config();
 import User from "../models/user";
 // Serialize and Deserialize User
 passport.serializeUser((user: any, done) => {
-  const sessionUser = {
+ const sessionUser = {
     id: user._id.toString(),
     role: user.role,
     name: user.name,
     email: user.email,
     avatar: user.avatar,
-    linkedUserId: user.linkedUserId || null,
-    access: user.access || null
+    linkedUserId: user.linkedUserId ? user.linkedUserId.toString() : null, // add this
+    googleId: user.googleId, // add if needed
   };
   console.log('✅ user serialized:', sessionUser);
   done(null, sessionUser); // <-- store this in the session
