@@ -47,6 +47,48 @@ export const getOrderById = async (req: Request, res: Response) => {
 export const createOrder = async (req: Request, res: Response) => {
   try {
     console.log('Creating order with data:', req.body)
+    
+    // Parse assignedCallers - handle both string and array formats
+    let assignedCallers: Types.ObjectId[] = []
+    if (req.body.assignedCallers) {
+      if (typeof req.body.assignedCallers === 'string') {
+        try {
+          // Parse the stringified JSON array
+          const parsedCallers = JSON.parse(req.body.assignedCallers)
+          if (Array.isArray(parsedCallers)) {
+            // Extract ObjectIds from the parsed array
+            assignedCallers = parsedCallers
+              .map((caller: any) => {
+                if (typeof caller === 'string') {
+                  return new Types.ObjectId(caller)
+                } else if (caller && typeof caller === 'object' && caller.id) {
+                  return new Types.ObjectId(caller.id)
+                }
+                return null
+              })
+              .filter((id: Types.ObjectId | null) => id !== null) as Types.ObjectId[]
+          }
+        } catch (parseError) {
+          console.error('Error parsing assignedCallers:', parseError)
+          return res.status(400).json({
+            message: 'Invalid assignedCallers format. Expected array of agent IDs.'
+          })
+        }
+      } else if (Array.isArray(req.body.assignedCallers)) {
+        // Handle direct array format
+        assignedCallers = req.body.assignedCallers
+          .map((caller: any) => {
+            if (typeof caller === 'string') {
+              return new Types.ObjectId(caller)
+            } else if (caller && typeof caller === 'object' && caller.id) {
+              return new Types.ObjectId(caller.id)
+            }
+            return caller // Assume it's already an ObjectId
+          })
+          .filter((id: any) => id instanceof Types.ObjectId) as Types.ObjectId[]
+      }
+    }
+
     const newOrder = new Order({
       caseId: req.body.caseId,
       caseName: req.body.caseName,
@@ -57,7 +99,7 @@ export const createOrder = async (req: Request, res: Response) => {
       deadline: req.body.deadline,
       orderStatus: req.body.orderStatus || 'pending',
       estimatedRevenue: req.body.estimatedRevenue,
-      assignedCallers: req.body.assignedCallers || [],
+      assignedCallers: assignedCallers,
       agentGoals: req.body.agentGoals || {} 
 
     })

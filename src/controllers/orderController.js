@@ -36,6 +36,50 @@ exports.getOrderById = getOrderById;
 const createOrder = async (req, res) => {
     try {
         console.log('Creating order with data:', req.body);
+        // Parse assignedCallers - handle both string and array formats
+        let assignedCallers = [];
+        if (req.body.assignedCallers) {
+            if (typeof req.body.assignedCallers === 'string') {
+                try {
+                    // Parse the stringified JSON array
+                    const parsedCallers = JSON.parse(req.body.assignedCallers);
+                    if (Array.isArray(parsedCallers)) {
+                        // Extract ObjectIds from the parsed array
+                        assignedCallers = parsedCallers
+                            .map((caller) => {
+                            if (typeof caller === 'string') {
+                                return new mongoose_1.Types.ObjectId(caller);
+                            }
+                            else if (caller && typeof caller === 'object' && caller.id) {
+                                return new mongoose_1.Types.ObjectId(caller.id);
+                            }
+                            return null;
+                        })
+                            .filter((id) => id !== null);
+                    }
+                }
+                catch (parseError) {
+                    console.error('Error parsing assignedCallers:', parseError);
+                    return res.status(400).json({
+                        message: 'Invalid assignedCallers format. Expected array of agent IDs.'
+                    });
+                }
+            }
+            else if (Array.isArray(req.body.assignedCallers)) {
+                // Handle direct array format
+                assignedCallers = req.body.assignedCallers
+                    .map((caller) => {
+                    if (typeof caller === 'string') {
+                        return new mongoose_1.Types.ObjectId(caller);
+                    }
+                    else if (caller && typeof caller === 'object' && caller.id) {
+                        return new mongoose_1.Types.ObjectId(caller.id);
+                    }
+                    return caller; // Assume it's already an ObjectId
+                })
+                    .filter((id) => id instanceof mongoose_1.Types.ObjectId);
+            }
+        }
         const newOrder = new orders_1.default({
             caseId: req.body.caseId,
             caseName: req.body.caseName,
@@ -46,7 +90,7 @@ const createOrder = async (req, res) => {
             deadline: req.body.deadline,
             orderStatus: req.body.orderStatus || 'pending',
             estimatedRevenue: req.body.estimatedRevenue,
-            assignedCallers: req.body.assignedCallers || [],
+            assignedCallers: assignedCallers,
             agentGoals: req.body.agentGoals || {}
         });
         await newOrder.save();
