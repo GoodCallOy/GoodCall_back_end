@@ -91,7 +91,9 @@ const createOrder = async (req, res) => {
             orderStatus: req.body.orderStatus || 'pending',
             estimatedRevenue: req.body.estimatedRevenue,
             assignedCallers: assignedCallers,
-            agentGoals: req.body.agentGoals || {}
+            agentGoals: req.body.agentGoals || {},
+            manager: req.body.manager,
+            agentsPrice: req.body.agentPrices || {}
         });
         await newOrder.save();
         res.status(200).json({

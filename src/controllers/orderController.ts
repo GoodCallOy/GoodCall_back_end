@@ -100,7 +100,9 @@ export const createOrder = async (req: Request, res: Response) => {
       orderStatus: req.body.orderStatus || 'pending',
       estimatedRevenue: req.body.estimatedRevenue,
       assignedCallers: assignedCallers,
-      agentGoals: req.body.agentGoals || {} 
+      agentGoals: req.body.agentGoals || {},
+      manager: req.body.manager,
+      agentsPrice: req.body.agentPrices || {}
 
     })
 
