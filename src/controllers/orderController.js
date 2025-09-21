@@ -80,7 +80,8 @@ const createOrder = async (req, res) => {
                     .filter((id) => id instanceof mongoose_1.Types.ObjectId);
             }
         }
-        const newOrder = new orders_1.default({
+        // Handle optional manager field - only include if it's a valid ObjectId
+        const orderData = {
             caseId: req.body.caseId,
             caseName: req.body.caseName,
             caseUnit: req.body.caseUnit,
@@ -92,9 +93,13 @@ const createOrder = async (req, res) => {
             estimatedRevenue: req.body.estimatedRevenue,
             assignedCallers: assignedCallers,
             agentGoals: req.body.agentGoals || {},
-            manager: req.body.manager,
             agentsPrice: req.body.agentPrices || {}
-        });
+        };
+        // Only include manager if it's provided and not empty
+        if (req.body.manager && req.body.manager.trim() !== '') {
+            orderData.manager = req.body.manager;
+        }
+        const newOrder = new orders_1.default(orderData);
         await newOrder.save();
         res.status(200).json({
             message: 'Order created successfully',
@@ -112,8 +117,61 @@ exports.createOrder = createOrder;
 // Update an order
 const updateOrder = async (req, res) => {
     const orderId = req.params.id;
-    const updatedData = req.body;
+    const updatedData = { ...req.body };
     try {
+        // Parse assignedCallers - handle both string and array formats (same logic as createOrder)
+        if (updatedData.assignedCallers) {
+            let assignedCallers = [];
+            if (typeof updatedData.assignedCallers === 'string') {
+                try {
+                    // Parse the stringified JSON array
+                    const parsedCallers = JSON.parse(updatedData.assignedCallers);
+                    if (Array.isArray(parsedCallers)) {
+                        // Extract ObjectIds from the parsed array
+                        assignedCallers = parsedCallers
+                            .map((caller) => {
+                            if (typeof caller === 'string') {
+                                return new mongoose_1.Types.ObjectId(caller);
+                            }
+                            else if (caller && typeof caller === 'object' && caller.id) {
+                                return new mongoose_1.Types.ObjectId(caller.id);
+                            }
+                            return null;
+                        })
+                            .filter((id) => id !== null);
+                    }
+                }
+                catch (parseError) {
+                    console.error('Error parsing assignedCallers:', parseError);
+                    return res.status(400).json({
+                        message: 'Invalid assignedCallers format. Expected array of agent IDs.'
+                    });
+                }
+            }
+            else if (Array.isArray(updatedData.assignedCallers)) {
+                // Handle direct array format
+                assignedCallers = updatedData.assignedCallers
+                    .map((caller) => {
+                    if (typeof caller === 'string') {
+                        return new mongoose_1.Types.ObjectId(caller);
+                    }
+                    else if (caller && typeof caller === 'object' && caller.id) {
+                        return new mongoose_1.Types.ObjectId(caller.id);
+                    }
+                    return caller; // Assume it's already an ObjectId
+                })
+                    .filter((id) => id instanceof mongoose_1.Types.ObjectId);
+            }
+            // Update the assignedCallers with properly converted ObjectIds
+            updatedData.assignedCallers = assignedCallers;
+        }
+        // Handle optional manager field - only include if it's provided and not empty
+        if (updatedData.manager !== undefined) {
+            if (!updatedData.manager || updatedData.manager.trim() === '') {
+                // If manager is empty string or null, set it to undefined to remove it
+                delete updatedData.manager;
+            }
+        }
         const updatedOrder = await orders_1.default.findByIdAndUpdate(orderId, updatedData, { new: true });
         if (!updatedOrder) {
             return res.status(404).json({ error: 'Order not found' });

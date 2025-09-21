@@ -77,7 +77,7 @@ const OrderSchema = new mongoose_1.Schema({
     manager: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false
     },
     agentsPrice: {
         type: Map,

@@ -15,8 +15,8 @@ export interface IOrder extends Document {
   estimatedRevenue: number
   assignedCallers: Types.ObjectId[]
   agentGoals: Record<string, number> 
-  manager: Types.ObjectId
-  agentsPrice: Record<string, number>
+  manager?: Types.ObjectId
+  agentsPrice?: Record<string, number>
   createdAt: Date
   updatedAt: Date
 }
@@ -75,7 +75,7 @@ const OrderSchema: Schema = new Schema<IOrder>(
     manager: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: false
     },
     agentsPrice: {
       type: Map,

@@ -89,7 +89,8 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     }
 
-    const newOrder = new Order({
+    // Handle optional manager field - only include if it's a valid ObjectId
+    const orderData: any = {
       caseId: req.body.caseId,
       caseName: req.body.caseName,
       caseUnit: req.body.caseUnit,
@@ -101,10 +102,15 @@ export const createOrder = async (req: Request, res: Response) => {
       estimatedRevenue: req.body.estimatedRevenue,
       assignedCallers: assignedCallers,
       agentGoals: req.body.agentGoals || {},
-      manager: req.body.manager,
       agentsPrice: req.body.agentPrices || {}
+    }
 
-    })
+    // Only include manager if it's provided and not empty
+    if (req.body.manager && req.body.manager.trim() !== '') {
+      orderData.manager = req.body.manager
+    }
+
+    const newOrder = new Order(orderData)
 
     await newOrder.save()
     res.status(200).json({
@@ -122,9 +128,62 @@ export const createOrder = async (req: Request, res: Response) => {
 // Update an order
 export const updateOrder = async (req: Request, res: Response) => {
   const orderId = req.params.id
-  const updatedData = req.body
+  const updatedData = { ...req.body }
 
   try {
+    // Parse assignedCallers - handle both string and array formats (same logic as createOrder)
+    if (updatedData.assignedCallers) {
+      let assignedCallers: Types.ObjectId[] = []
+      
+      if (typeof updatedData.assignedCallers === 'string') {
+        try {
+          // Parse the stringified JSON array
+          const parsedCallers = JSON.parse(updatedData.assignedCallers)
+          if (Array.isArray(parsedCallers)) {
+            // Extract ObjectIds from the parsed array
+            assignedCallers = parsedCallers
+              .map((caller: any) => {
+                if (typeof caller === 'string') {
+                  return new Types.ObjectId(caller)
+                } else if (caller && typeof caller === 'object' && caller.id) {
+                  return new Types.ObjectId(caller.id)
+                }
+                return null
+              })
+              .filter((id: Types.ObjectId | null) => id !== null) as Types.ObjectId[]
+          }
+        } catch (parseError) {
+          console.error('Error parsing assignedCallers:', parseError)
+          return res.status(400).json({
+            message: 'Invalid assignedCallers format. Expected array of agent IDs.'
+          })
+        }
+      } else if (Array.isArray(updatedData.assignedCallers)) {
+        // Handle direct array format
+        assignedCallers = updatedData.assignedCallers
+          .map((caller: any) => {
+            if (typeof caller === 'string') {
+              return new Types.ObjectId(caller)
+            } else if (caller && typeof caller === 'object' && caller.id) {
+              return new Types.ObjectId(caller.id)
+            }
+            return caller // Assume it's already an ObjectId
+          })
+          .filter((id: any) => id instanceof Types.ObjectId) as Types.ObjectId[]
+      }
+      
+      // Update the assignedCallers with properly converted ObjectIds
+      updatedData.assignedCallers = assignedCallers
+    }
+
+    // Handle optional manager field - only include if it's provided and not empty
+    if (updatedData.manager !== undefined) {
+      if (!updatedData.manager || updatedData.manager.trim() === '') {
+        // If manager is empty string or null, set it to undefined to remove it
+        delete updatedData.manager
+      }
+    }
+
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updatedData, { new: true })
     if (!updatedOrder) {
       return res.status(404).json({ error: 'Order not found' })
