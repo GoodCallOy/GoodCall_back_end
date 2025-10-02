@@ -95,6 +95,12 @@ export const testAuth = (req: Request, res: Response) => {
 export const isAuthenticated = (req: Request, res: Response) => {
   const token = req.cookies.token;
   if (!token) {
+    console.warn('Auth /me: missing token cookie', {
+      origin: req.headers.origin,
+      referer: req.headers.referer,
+      userAgent: req.headers['user-agent'],
+      cookieHeaderPresent: Boolean(req.headers.cookie),
+    });
     return res.status(401).json({ message: 'Not authenticated' });
   }
   try {
@@ -102,6 +108,7 @@ export const isAuthenticated = (req: Request, res: Response) => {
     // Optionally, fetch user from DB here if you want more info
     return res.json({ user: decoded });
   } catch (err) {
+    console.warn('Auth /me: invalid token', { error: (err as any)?.message });
     return res.status(401).json({ message: 'Invalid token' });
   }
 };
