@@ -27,8 +27,8 @@ export function logoutUser(req: Request, res: Response, next: NextFunction) {
     req.session?.destroy(() => {
       res.clearCookie('connect.sid', {
         httpOnly: true,
-        sameSite: 'none',
-        secure: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production',
         path: '/', // important so it actually clears
       });
       return res.sendStatus(204);
@@ -77,8 +77,8 @@ export const getCallback = [
       // Set the JWT token in an HTTP-only cookie
       res.cookie('token', JWTtoken, {
         httpOnly: true, // This ensures the cookie cannot be accessed via JavaScript
-        secure: true, // Ensure the cookie is sent over HTTPS only in production
-        sameSite: 'none', // Required for cross-site cookies (can be 'lax' or 'strict' depending on your needs)
+        secure: process.env.NODE_ENV === 'production', // Only secure in production
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax in dev helps Firefox
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
       })
   

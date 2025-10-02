@@ -42,8 +42,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true, // Use secure cookies in production
-      sameSite: 'none', // Allow cross-origin cookies
+      secure: process.env.NODE_ENV === 'production', // Only secure in production
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax in dev to help Firefox
       httpOnly: true, // Prevent JavaScript from accessing the cookie
       maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
     },
