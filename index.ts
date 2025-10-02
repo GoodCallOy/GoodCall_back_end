@@ -35,6 +35,10 @@ const app = express();
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true })) // Parse URL-encoded bodies
 
+// Required when running behind a proxy/edge (e.g., Render) to honor X-Forwarded-* headers
+// Ensures req.secure is true when the original request was HTTPS so secure cookies are set/sent
+app.set('trust proxy', 1)
+
 // Session middleware
 app.use(
   session({

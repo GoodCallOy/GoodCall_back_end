@@ -33,6 +33,9 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.urlencoded({ extended: true })); // Parse URL-encoded bodies
+// Required when running behind a proxy/edge (e.g., Render) to honor X-Forwarded-* headers
+// Ensures req.secure is true when the original request was HTTPS so secure cookies are set/sent
+app.set('trust proxy', 1);
 // Session middleware
 app.use((0, express_session_1.default)({
     secret: process.env.SESSION_SECRET, // Keep secret in .env
