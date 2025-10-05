@@ -50,6 +50,8 @@ app.use(
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax in dev to help Firefox
       httpOnly: true, // Prevent JavaScript from accessing the cookie
       maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
+      path: '/', // Make cookie available for all paths
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined, // Allow subdomain sharing in production
     },
     store: MongoStore.create({
       mongoUrl: process.env.MONGO2_URI, // Use your MongoDB connection string
@@ -67,7 +69,8 @@ app.use(
     ],
     credentials: true, // Allow cookies
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization", // ✅ Add Authorization header
+    allowedHeaders: "Content-Type,Authorization,Cookie", // ✅ Add Cookie header
+    exposedHeaders: "Set-Cookie", // ✅ Expose Set-Cookie header
   })
 );
 

@@ -62,6 +62,8 @@ exports.getCallback = [
             secure: process.env.NODE_ENV === 'production', // Only secure in production
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax in dev helps Firefox
             maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
+            path: '/', // Make cookie available for all paths
+            domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined, // Allow subdomain sharing in production
         });
         console.log('🔵 Issued JWT token in cookie');
         // Redirect to the client (frontend)
