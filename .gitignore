@@ -105,3 +105,7 @@ yarn.lock
 
 # Ignore specific generated files for rendering platforms
 render-output/
+
+# Ignore compiled JavaScript files (let Render.com compile from TypeScript)
+*.js
+!dist/**/*.js
