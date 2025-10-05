@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Types } from 'mongoose'
 
 export type caseUnit = 'hours' | 'interviews' | 'meetings'
 export type OrderStatus = 'pending' | 'in-progress' | 'completed' | 'cancelled' | 'on-hold'
+export type CaseType = 'Customer Order' | 'Special Invoincing' | 'Pilot' | 'Interviews' | 'Kukki'
 
 export interface IOrder extends Document {
   caseId: Types.ObjectId
@@ -12,10 +13,13 @@ export interface IOrder extends Document {
   startDate: Date 
   deadline: Date
   orderStatus: OrderStatus
+  caseType: CaseType
+  ProjectManagmentFee?: number
+  ProjectStartFee?: number
   estimatedRevenue: number
   assignedCallers: Types.ObjectId[]
   agentGoals: Record<string, number> 
-  manager?: Types.ObjectId
+  managers?: Types.ObjectId[]
   agentsPrice?: Record<string, number>
   createdAt: Date
   updatedAt: Date
@@ -58,6 +62,21 @@ const OrderSchema: Schema = new Schema<IOrder>(
       enum: ['pending', 'in-progress', 'completed', 'cancelled', 'on-hold'],
       required: true
     },
+    caseType: {
+      type: String,
+      enum: ['Customer Order', 'Special Invoincing', 'Pilot', 'Interviews', 'Kukki'],
+      required: true
+    },
+    ProjectManagmentFee: {
+      type: Number,
+      required: false,
+      default: 0
+    },
+    ProjectStartFee: {
+      type: Number,
+      required: false,
+      default: 0
+    },
     estimatedRevenue: {
       type: Number,
       required: true
@@ -72,11 +91,12 @@ const OrderSchema: Schema = new Schema<IOrder>(
         ref: 'gcAgent',
       }
     ],
-    manager: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: false
-    },
+    managers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      }
+    ],
     agentsPrice: {
       type: Map,
       of: Number,

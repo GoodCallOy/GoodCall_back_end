@@ -89,7 +89,7 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     }
 
-    // Handle optional manager field - only include if it's a valid ObjectId
+    // Handle optional managers field - accept array of { id, name } or ids
     const orderData: any = {
       caseId: req.body.caseId,
       caseName: req.body.caseName,
@@ -99,15 +99,31 @@ export const createOrder = async (req: Request, res: Response) => {
       startDate: req.body.startDate || new Date(), // Default to current date if not provided
       deadline: req.body.deadline,
       orderStatus: req.body.orderStatus || 'pending',
+      caseType: req.body.caseType,
+      ProjectManagmentFee: req.body.ProjectManagmentFee ?? 0,
+      ProjectStartFee: req.body.ProjectStartFee ?? 0,
       estimatedRevenue: req.body.estimatedRevenue,
       assignedCallers: assignedCallers,
       agentGoals: req.body.agentGoals || {},
       agentsPrice: req.body.agentPrices || {}
     }
-
-    // Only include manager if it's provided and not empty
-    if (req.body.manager && req.body.manager.trim() !== '') {
-      orderData.manager = req.body.manager
+    if (req.body.managers) {
+      if (Array.isArray(req.body.managers)) {
+        orderData.managers = req.body.managers
+          .map((m: any) => (typeof m === 'string' ? m : m?.id))
+          .filter((id: any) => !!id)
+          .map((id: string) => new Types.ObjectId(id));
+      } else if (typeof req.body.managers === 'string') {
+        try {
+          const parsed = JSON.parse(req.body.managers);
+          if (Array.isArray(parsed)) {
+            orderData.managers = parsed
+              .map((m: any) => (typeof m === 'string' ? m : m?.id))
+              .filter((id: any) => !!id)
+              .map((id: string) => new Types.ObjectId(id));
+          }
+        } catch {}
+      }
     }
 
     const newOrder = new Order(orderData)
@@ -176,11 +192,25 @@ export const updateOrder = async (req: Request, res: Response) => {
       updatedData.assignedCallers = assignedCallers
     }
 
-    // Handle optional manager field - only include if it's provided and not empty
-    if (updatedData.manager !== undefined) {
-      if (!updatedData.manager || updatedData.manager.trim() === '') {
-        // If manager is empty string or null, set it to undefined to remove it
-        delete updatedData.manager
+    // Normalize managers in update payload
+    if (updatedData.managers !== undefined) {
+      if (!updatedData.managers) {
+        delete (updatedData as any).managers;
+      } else if (Array.isArray(updatedData.managers)) {
+        (updatedData as any).managers = updatedData.managers
+          .map((m: any) => (typeof m === 'string' ? m : m?.id))
+          .filter((id: any) => !!id)
+          .map((id: string) => new Types.ObjectId(id));
+      } else if (typeof updatedData.managers === 'string') {
+        try {
+          const parsed = JSON.parse(updatedData.managers);
+          if (Array.isArray(parsed)) {
+            (updatedData as any).managers = parsed
+              .map((m: any) => (typeof m === 'string' ? m : m?.id))
+              .filter((id: any) => !!id)
+              .map((id: string) => new Types.ObjectId(id));
+          }
+        } catch {}
       }
     }
 
