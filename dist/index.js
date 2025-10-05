@@ -46,8 +46,6 @@ app.use((0, express_session_1.default)({
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax in dev to help Firefox
         httpOnly: true, // Prevent JavaScript from accessing the cookie
         maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
-        path: '/', // Make cookie available for all paths
-        // Removed domain restriction - let browser handle it naturally
     },
     store: connect_mongo_1.default.create({
         mongoUrl: process.env.MONGO2_URI, // Use your MongoDB connection string
@@ -62,8 +60,7 @@ app.use((0, cors_1.default)({
     ],
     credentials: true, // Allow cookies
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization,Cookie", // ✅ Add Cookie header
-    exposedHeaders: "Set-Cookie", // ✅ Expose Set-Cookie header
+    allowedHeaders: "Content-Type,Authorization", // ✅ Add Authorization header
 }));
 app.use(express_1.default.json());
 app.use(passport_1.default.initialize());

@@ -16,8 +16,8 @@ interface CustomUser {
 
 const CLIENT_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://goodcall-front-end.onrender.com'
-    : 'https://localhost:8080'
+    ? 'https://goodcall-front-end.onrender.com/#/post-login'
+    : 'https://localhost:8080/#/post-login'
 
 // ✅ Logout Function
 export function logoutUser(req: Request, res: Response, next: NextFunction) {
@@ -75,17 +75,12 @@ export const getCallback = [
       console.log('✅ Google authentication successful, issuing token...', JWTtoken)
 
       // Set the JWT token in an HTTP-only cookie
-      const cookieOptions = {
+      res.cookie('token', JWTtoken, {
         httpOnly: true, // This ensures the cookie cannot be accessed via JavaScript
         secure: process.env.NODE_ENV === 'production', // Only secure in production
-        sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax', // Lax in dev helps Firefox
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax in dev helps Firefox
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
-        path: '/', // Make cookie available for all paths
-        // No domain restriction - let the browser handle cross-origin cookies naturally
-      };
-      
-      console.log('🍪 Setting cookie with options:', cookieOptions);
-      res.cookie('token', JWTtoken, cookieOptions);
+      })
 
       console.log('🔵 Issued JWT token in cookie')
 
@@ -95,34 +90,9 @@ export const getCallback = [
   ]
 export const testAuth = (req: Request, res: Response) => {
     console.log('🔵 Auth test route hit')
-    console.log('🔍 Test route headers:', {
-      origin: req.headers.origin,
-      referer: req.headers.referer,
-      userAgent: req.headers['user-agent'],
-      cookie: req.headers.cookie,
-      host: req.headers.host,
-    });
-    console.log('🔍 Test route cookies:', req.cookies);
-    res.json({ 
-      message: 'Auth route works',
-      cookies: req.cookies,
-      headers: {
-        origin: req.headers.origin,
-        cookie: req.headers.cookie,
-      }
-    })
+    res.json({ message: 'Auth route works' })
 }
 export const isAuthenticated = (req: Request, res: Response) => {
-  console.log('🔍 Auth /me endpoint hit');
-  console.log('🔍 Request headers:', {
-    origin: req.headers.origin,
-    referer: req.headers.referer,
-    userAgent: req.headers['user-agent'],
-    cookie: req.headers.cookie,
-    host: req.headers.host,
-  });
-  console.log('🔍 Parsed cookies:', req.cookies);
-  
   const token = req.cookies.token;
   if (!token) {
     console.warn('Auth /me: missing token cookie', {
@@ -130,13 +100,11 @@ export const isAuthenticated = (req: Request, res: Response) => {
       referer: req.headers.referer,
       userAgent: req.headers['user-agent'],
       cookieHeaderPresent: Boolean(req.headers.cookie),
-      allCookies: req.cookies,
     });
     return res.status(401).json({ message: 'Not authenticated' });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    console.log('✅ Token verified successfully for user:', decoded);
     // Optionally, fetch user from DB here if you want more info
     return res.json({ user: decoded });
   } catch (err) {
