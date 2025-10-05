@@ -16,8 +16,8 @@ interface CustomUser {
 
 const CLIENT_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://goodcall-front-end.onrender.com/#/post-login'
-    : 'https://localhost:8080/#/post-login'
+    ? 'https://goodcall-front-end.onrender.com'
+    : 'https://localhost:8080'
 
 // ✅ Logout Function
 export function logoutUser(req: Request, res: Response, next: NextFunction) {
@@ -53,7 +53,7 @@ export const getCallback = [
       next()
     },
     passport.authenticate('google', {
-      failureRedirect: `${CLIENT_URL}/login`, // Redirect to login on failure
+      failureRedirect: `${CLIENT_URL}/#/login`, // Redirect to login on failure
     }),
     (req: Request, res: Response) => {
       console.log('🔍 Passport user object:', req.user) // User populated by passport
@@ -81,14 +81,14 @@ export const getCallback = [
         sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax', // Lax in dev helps Firefox
         maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
         path: '/', // Make cookie available for all paths
-        // Removed domain restriction - let browser handle it naturally
+        // No domain restriction - let the browser handle cross-origin cookies naturally
       };
       
       console.log('🍪 Setting cookie with options:', cookieOptions);
       res.cookie('token', JWTtoken, cookieOptions);
 
       console.log('🔵 Issued JWT token in cookie')
-  
+
       // Redirect to the client (frontend)
       res.redirect(CLIENT_URL)
     }
