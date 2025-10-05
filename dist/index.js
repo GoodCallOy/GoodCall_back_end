@@ -27,6 +27,8 @@ const authRoutes_1 = __importDefault(require("./src/routes/authRoutes"));
 const user_1 = __importDefault(require("./src/routes/user"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const dailyLogRoutes_1 = __importDefault(require("./src/routes/dailyLogRoutes"));
+const weekConfigurationRoutes_1 = __importDefault(require("./src/routes/weekConfigurationRoutes"));
+const weekConfigRoutes_1 = __importDefault(require("./src/routes/weekConfigRoutes"));
 dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
@@ -92,6 +94,8 @@ app.use('/api/v1/gcCases', caseRoutes_1.default);
 app.use('/api/v1/gcAgents', gcAgentRoutes_1.default);
 app.use('/api/v1/orders', orderRoutes_1.default);
 app.use('/api/v1/dailyLogs', dailyLogRoutes_1.default);
+app.use('/api/v1/week-configurations', weekConfigurationRoutes_1.default);
+app.use('/api/v1/week-config', weekConfigRoutes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
 if (process.env.NODE_ENV === 'development') {

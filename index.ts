@@ -24,6 +24,8 @@ import authRoutes from "./src/routes/authRoutes";
 import userRoutes from "./src/routes/user";
 import cookieParser from 'cookie-parser'
 import dailyLogRoutes from './src/routes/dailyLogRoutes'
+import weekConfigurationRoutes from './src/routes/weekConfigurationRoutes'
+import weekConfigRoutes from './src/routes/weekConfigRoutes'
 
 dotenv.config();
 
@@ -109,6 +111,8 @@ app.use('/api/v1/gcCases', caseRouter);
 app.use('/api/v1/gcAgents', gcAgentRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/dailyLogs', dailyLogRoutes)
+app.use('/api/v1/week-configurations', weekConfigurationRoutes);
+app.use('/api/v1/week-config', weekConfigRoutes);
 
 app.use("/api/v1/user", userRoutes);
 
