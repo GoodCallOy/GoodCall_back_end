@@ -51,7 +51,7 @@ app.use(
       httpOnly: true, // Prevent JavaScript from accessing the cookie
       maxAge: 24 * 60 * 60 * 1000, // Session expires after 1 day
       path: '/', // Make cookie available for all paths
-      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined, // Allow subdomain sharing in production
+      // Removed domain restriction - let browser handle it naturally
     },
     store: MongoStore.create({
       mongoUrl: process.env.MONGO2_URI, // Use your MongoDB connection string
