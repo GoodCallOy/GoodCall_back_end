@@ -4,6 +4,7 @@ import { port, host } from './serverConfig.json';
 import session from "express-session";
 import passport from "./src/auth/passport";
 import connectDB from './src/db/dbConnection';
+import { ensureDefaultCaseTypes } from './src/models/caseType'
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 import https from 'https';
@@ -24,6 +25,7 @@ import authRoutes from "./src/routes/authRoutes";
 import userRoutes from "./src/routes/user";
 import cookieParser from 'cookie-parser'
 import dailyLogRoutes from './src/routes/dailyLogRoutes'
+import caseTypeRoutes from './src/routes/caseTypeRoutes'
 import weekConfigurationRoutes from './src/routes/weekConfigurationRoutes'
 import weekConfigRoutes from './src/routes/weekConfigRoutes'
 
@@ -31,6 +33,7 @@ dotenv.config();
 
 // Connect to the database
 connectDB();
+ensureDefaultCaseTypes().catch(err => console.error('CaseTypes seed failed:', err))
 
 const app = express();
 
@@ -111,6 +114,7 @@ app.use('/api/v1/gcCases', caseRouter);
 app.use('/api/v1/gcAgents', gcAgentRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/dailyLogs', dailyLogRoutes)
+app.use('/api/v1', caseTypeRoutes)
 app.use('/api/v1/week-configurations', weekConfigurationRoutes);
 app.use('/api/v1/week-config', weekConfigRoutes);
 

@@ -11,6 +11,19 @@ export interface IDailyLog extends Document {
   outgoing_calls: number;
   answered_calls: number;
   response_rate: number;
+  outboundCalls?: number
+  completedCalls?: number
+  aLeads?: number
+  bLeads?: number
+  cLeads?: number
+  dLeads?: number
+  noPotential?: number
+  interviews?: number
+  hours?: number
+  bookedInterviews?: number
+  completedInterviews?: number
+  resultAnalysis?: string
+  comments?: string
   date: Date
   quantityCompleted: number
 }
@@ -60,6 +73,19 @@ const DailyLogSchema: Schema = new Schema<IDailyLog>(
       type: Number,
       required: true
     },
+    outboundCalls: { type: Number, default: 0 },
+    completedCalls: { type: Number, default: 0 },
+    aLeads: { type: Number, default: 0 },
+    bLeads: { type: Number, default: 0 },
+    cLeads: { type: Number, default: 0 },
+    dLeads: { type: Number, default: 0 },
+    noPotential: { type: Number, default: 0 },
+    interviews: { type: Number, default: 0 },
+    hours: { type: Number, default: 0 },
+    bookedInterviews: { type: Number, default: 0 },
+    completedInterviews: { type: Number, default: 0 },
+    resultAnalysis: { type: String, default: '' },
+    comments: { type: String, default: '' },
     date: {
       type: Date,
       required: true

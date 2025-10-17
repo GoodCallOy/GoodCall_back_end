@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from 'mongoose'
 
 export type caseUnit = 'hours' | 'interviews' | 'meetings'
 export type OrderStatus = 'pending' | 'in-progress' | 'completed' | 'cancelled' | 'on-hold'
-export type CaseType = 'Customer Order' | 'Special Invoincing' | 'Pilot' | 'Interviews' | 'Kukki'
+export type CaseType = string
 
 export interface IOrder extends Document {
   caseId: Types.ObjectId
@@ -21,6 +21,7 @@ export interface IOrder extends Document {
   agentGoals: Record<string, number> 
   managers?: Types.ObjectId[]
   agentsPrice?: Record<string, number>
+  searchedPhoneNumbers?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -64,7 +65,6 @@ const OrderSchema: Schema = new Schema<IOrder>(
     },
     caseType: {
       type: String,
-      enum: ['Customer Order', 'Special Invoincing', 'Pilot', 'Interviews', 'Kukki'],
       required: true
     },
     ProjectManagmentFee: {
@@ -101,6 +101,11 @@ const OrderSchema: Schema = new Schema<IOrder>(
       type: Map,
       of: Number,
       default: {}
+    }
+    ,
+    searchedPhoneNumbers: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

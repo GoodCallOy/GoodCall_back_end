@@ -37,7 +37,16 @@ export const getOrderById = async (req: Request, res: Response) => {
   try {
       const order = await Order.findById(req.params.id)
       if (!order) return res.status(404).json({ message: 'order not found' })
-      res.json(order)
+
+      const data = order.toObject()
+      // aliases/output helpers expected by frontend
+      ;(data as any).enableSearchedPhoneNumbers = Boolean((data as any).searchedPhoneNumbers)
+      ;(data as any).startDateISO = data.startDate ? new Date(data.startDate).toISOString() : null
+      ;(data as any).deadlineISO = data.deadline ? new Date(data.deadline).toISOString() : null
+      // Remove the original field to avoid confusion
+      delete (data as any).searchedPhoneNumbers
+
+      res.json(data)
     } catch (err) {
       res.status(500).json({ message: 'Failed to fetch order', error: err })
     }
@@ -105,7 +114,8 @@ export const createOrder = async (req: Request, res: Response) => {
       estimatedRevenue: req.body.estimatedRevenue,
       assignedCallers: assignedCallers,
       agentGoals: req.body.agentGoals || {},
-      agentsPrice: req.body.agentPrices || {}
+      agentsPrice: req.body.agentPrices || {},
+      searchedPhoneNumbers: Boolean(req.body.searchedPhoneNumbers) === true
     }
     if (req.body.managers) {
       if (Array.isArray(req.body.managers)) {
@@ -126,7 +136,9 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     }
 
-    const newOrder = new Order(orderData)
+    const newOrder = new Order({
+      ...orderData,
+    })
 
     await newOrder.save()
     res.status(200).json({
@@ -145,6 +157,16 @@ export const createOrder = async (req: Request, res: Response) => {
 export const updateOrder = async (req: Request, res: Response) => {
   const orderId = req.params.id
   const updatedData = { ...req.body }
+  // normalize booleans and dates for update
+  if (updatedData.searchedPhoneNumbers !== undefined) {
+    updatedData.searchedPhoneNumbers = Boolean(updatedData.searchedPhoneNumbers) === true
+  }
+  if (typeof updatedData.startDate === 'string') {
+    updatedData.startDate = new Date(updatedData.startDate)
+  }
+  if (typeof updatedData.deadline === 'string') {
+    updatedData.deadline = new Date(updatedData.deadline)
+  }
 
   try {
     // Parse assignedCallers - handle both string and array formats (same logic as createOrder)

@@ -53,6 +53,19 @@ export const addDailyLog = async (req: Request, res: Response) => {
   try {
     const { agent, agentName, order, caseName, caseUnit, call_time, completed_calls, outgoing_calls, answered_calls, response_rate, date, quantityCompleted,  } = req.body
     console.log('dailylog data:', req.body)
+    const counters = {
+      outboundCalls: Number(req.body.outboundCalls) || 0,
+      completedCalls: Number(req.body.completedCalls) || 0,
+      aLeads: Number(req.body.aLeads) || 0,
+      bLeads: Number(req.body.bLeads) || 0,
+      cLeads: Number(req.body.cLeads) || 0,
+      dLeads: Number(req.body.dLeads) || 0,
+      noPotential: Number(req.body.noPotential) || 0,
+      interviews: Number(req.body.interviews) || 0,
+      hours: Number(req.body.hours) || 0,
+      bookedInterviews: Number(req.body.bookedInterviews) || 0,
+      completedInterviews: Number(req.body.completedInterviews) || 0,
+    }
     const newLog = new DailyLog({
       agent,
       agentName,
@@ -65,7 +78,10 @@ export const addDailyLog = async (req: Request, res: Response) => {
       answered_calls: answered_calls || 0,
       response_rate: response_rate || 0,
       date: date || new Date(),
-      quantityCompleted: quantityCompleted || 0
+      quantityCompleted: quantityCompleted || 0,
+      ...counters,
+      resultAnalysis: String(req.body.resultAnalysis ?? ''),
+      comments: String(req.body.comments ?? ''),
     })
     
     const savedLog = await newLog.save()
