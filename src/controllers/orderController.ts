@@ -46,6 +46,7 @@ export const getOrderById = async (req: Request, res: Response) => {
       // Remove the original field to avoid confusion
       delete (data as any).searchedPhoneNumbers
 
+      console.log('Fetched order by id:', JSON.stringify(data))
       res.json(data)
     } catch (err) {
       res.status(500).json({ message: 'Failed to fetch order', error: err })
@@ -136,8 +137,49 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     }
 
+    // Normalize agent assignments
+    const incomingGoals: Record<string, number> = req.body.agentGoals || {}
+    const incomingRates: Record<string, number> = (req.body.agentRates || req.body.agentPrices || {})
+    const incomingAssignments: Array<any> = Array.isArray(req.body.agentAssignments) ? req.body.agentAssignments : []
+
+    const unionIds = new Set<string>([
+      ...assignedCallers.map(id => String(id)),
+      ...Object.keys(incomingGoals || {}),
+      ...Object.keys(incomingRates || {}),
+      ...incomingAssignments.map(a => String(a?.id)).filter(Boolean),
+    ])
+
+    // helper to optionally lookup name later if needed
+    const lookupNames = async (ids: string[]) => {
+      const userDocs = await gcAgent.find({ _id: { $in: ids.map(id => new Types.ObjectId(id)) } }).select('name firstName lastName').lean()
+      const map = new Map<string, string>()
+      for (const u of userDocs as any[]) {
+        const nm = u.name || [u.firstName, u.lastName].filter(Boolean).join(' ')
+        map.set(String(u._id), nm)
+      }
+      return map
+    }
+
+    const idsArray = Array.from(unionIds)
+    const nameById = await lookupNames(idsArray)
+
+    const normalizedAssignments = idsArray.map(id => {
+      const fromArray = incomingAssignments.find(a => String(a?.id) === id) || {}
+      const name = fromArray.name || nameById.get(id) || ''
+      const goal = Number(fromArray.goal ?? (incomingGoals?.[id])) || 0
+      const rate = Number(fromArray.rate ?? (incomingRates?.[id])) || 0
+      return { id, name, goal, rate }
+    })
+
+    // rebuild mirrors
+    const normalizedGoals = Object.fromEntries(normalizedAssignments.map(a => [a.id, a.goal]))
+    const normalizedRates = Object.fromEntries(normalizedAssignments.map(a => [a.id, a.rate]))
+
     const newOrder = new Order({
       ...orderData,
+      agentAssignments: normalizedAssignments,
+      agentGoals: normalizedGoals,
+      agentRates: normalizedRates,
     })
 
     await newOrder.save()
@@ -235,6 +277,44 @@ export const updateOrder = async (req: Request, res: Response) => {
         } catch {}
       }
     }
+
+    // Normalize agent assignments on update as well
+    const incomingGoals: Record<string, number> = updatedData.agentGoals || {}
+    const incomingRates: Record<string, number> = (updatedData.agentRates || updatedData.agentPrices || {})
+    const incomingAssignments: Array<any> = Array.isArray(updatedData.agentAssignments) ? updatedData.agentAssignments : []
+
+    const current = await Order.findById(orderId).select('assignedCallers').lean()
+    const assignedCallersIds = (current?.assignedCallers || []).map((id: any) => String(id))
+
+    const unionIds = new Set<string>([
+      ...assignedCallersIds,
+      ...Object.keys(incomingGoals || {}),
+      ...Object.keys(incomingRates || {}),
+      ...incomingAssignments.map(a => String(a?.id)).filter(Boolean),
+    ])
+
+    const lookupNames = async (ids: string[]) => {
+      const userDocs = await gcAgent.find({ _id: { $in: ids.map(id => new Types.ObjectId(id)) } }).select('name firstName lastName').lean()
+      const map = new Map<string, string>()
+      for (const u of userDocs as any[]) {
+        const nm = (u as any).name || [ (u as any).firstName, (u as any).lastName ].filter(Boolean).join(' ')
+        map.set(String((u as any)._id), nm)
+      }
+      return map
+    }
+    const idsArray = Array.from(unionIds)
+    const nameById = await lookupNames(idsArray)
+
+    const normalizedAssignments = idsArray.map(id => {
+      const fromArray = incomingAssignments.find(a => String(a?.id) === id) || {}
+      const name = fromArray.name || nameById.get(id) || ''
+      const goal = Number(fromArray.goal ?? (incomingGoals?.[id])) || 0
+      const rate = Number(fromArray.rate ?? (incomingRates?.[id])) || 0
+      return { id, name, goal, rate }
+    })
+    updatedData.agentAssignments = normalizedAssignments
+    updatedData.agentGoals = Object.fromEntries(normalizedAssignments.map((a: any) => [a.id, a.goal]))
+    updatedData.agentRates = Object.fromEntries(normalizedAssignments.map((a: any) => [a.id, a.rate]))
 
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updatedData, { new: true })
     if (!updatedOrder) {

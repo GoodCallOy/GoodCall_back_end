@@ -19,6 +19,13 @@ export interface IOrder extends Document {
   estimatedRevenue: number
   assignedCallers: Types.ObjectId[]
   agentGoals: Record<string, number> 
+  agentRates?: Record<string, number>
+  agentAssignments?: Array<{
+    id: string
+    name?: string
+    goal?: number
+    rate?: number
+  }>
   managers?: Types.ObjectId[]
   agentsPrice?: Record<string, number>
   searchedPhoneNumbers?: boolean
@@ -85,6 +92,19 @@ const OrderSchema: Schema = new Schema<IOrder>(
       type: Object, // or Map, or Mixed, depending on your needs
       default: {}
     },
+    agentRates: {
+      type: Map,
+      of: Number,
+      default: {}
+    },
+    agentAssignments: [
+      {
+        id: { type: String, required: true },
+        name: { type: String, default: '' },
+        goal: { type: Number, default: 0 },
+        rate: { type: Number, default: 0 },
+      }
+    ],
     assignedCallers: [
       {
         type: Schema.Types.ObjectId,
