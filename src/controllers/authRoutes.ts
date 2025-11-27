@@ -16,8 +16,11 @@ interface CustomUser {
 
 const CLIENT_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://goodcall-front-end.onrender.com/#/post-login'
-    : 'https://localhost:8080/#/post-login'
+    ? 'https://goodcall-front-end.onrender.com'
+    : 'https://localhost:8080'
+
+const POST_LOGIN_PATH = '/#/post-login'
+const LOGIN_PATH = '/#/login'
 
 // ✅ Logout Function
 export function logoutUser(req: Request, res: Response, next: NextFunction) {
@@ -53,7 +56,7 @@ export const getCallback = [
       next()
     },
     passport.authenticate('google', {
-      failureRedirect: `${CLIENT_URL}/#/login`, // Redirect to login on failure
+      failureRedirect: `${CLIENT_URL}${LOGIN_PATH}`, // Redirect to login on failure
     }),
     (req: Request, res: Response) => {
       console.log('🔍 Passport user object:', req.user) // User populated by passport
@@ -85,12 +88,20 @@ export const getCallback = [
       console.log('🔵 Issued JWT token in cookie')
 
       // Redirect to the client (frontend)
-      res.redirect(CLIENT_URL)
+      res.redirect(`${CLIENT_URL}${POST_LOGIN_PATH}`)
     }
   ]
 export const testAuth = (req: Request, res: Response) => {
     console.log('🔵 Auth test route hit')
-    res.json({ message: 'Auth route works' })
+    res.json({ 
+      message: 'Auth route works',
+      nodeEnv: process.env.NODE_ENV,
+      isProduction: process.env.NODE_ENV === 'production',
+      cookieSettings: {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      }
+    })
 }
 export const isAuthenticated = (req: Request, res: Response) => {
   const token = req.cookies.token;
