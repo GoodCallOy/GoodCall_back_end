@@ -28,6 +28,7 @@ import dailyLogRoutes from './src/routes/dailyLogRoutes'
 import caseTypeRoutes from './src/routes/caseTypeRoutes'
 import weekConfigurationRoutes from './src/routes/weekConfigurationRoutes'
 import weekConfigRoutes from './src/routes/weekConfigRoutes'
+import openSysRoutes from './src/routes/openSysRoutes'
 
 dotenv.config();
 
@@ -117,6 +118,7 @@ app.use('/api/v1/dailyLogs', dailyLogRoutes)
 app.use('/api/v1', caseTypeRoutes)
 app.use('/api/v1/week-configurations', weekConfigurationRoutes);
 app.use('/api/v1/week-config', weekConfigRoutes);
+app.use('/api/v1/openSys', openSysRoutes);
 
 app.use("/api/v1/user", userRoutes);
 
