@@ -1,36 +1,23 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
-import IAgentGoals from '../types/IAgentGoals';
+import { IAgentGoals } from '../types/IAgentGoals';
 
-const agentGoalSchema = new Schema<IAgentGoals>({
-    agent: { 
-      type: String, 
-      required: true 
-    },
-    case: { 
-      type: String, 
-      required: true 
-    },
-    goal: { 
-      type: String,
-       required: true 
-    },
-    goal_date: {
-      start: { type: Date, required: true },
-      end: { type: Date, required: true },
-    },
-    type: { 
-      type: String,
-      required: true 
-    },
-    monthKey: {
-      type: String, 
-      required: true
-    },
-    create_date: { 
-      type: Date, 
-      default: Date.now 
-    }
-}, { timestamps: true }); // Auto-manages `createdAt` and `updatedAt`
+const agentGoalSchema = new Schema<IAgentGoals>(
+  {
+    agentId: { type: String, required: true },
+    orderId: { type: String, required: true },
+    agentName: { type: String, required: true },
+    caseName: { type: String, required: true },
+    type: { type: String, required: true, default: 'Weekly' },
+    weekStartDate: { type: Date, required: true },
+    weekEndDate: { type: Date, required: true },
+    goal: { type: Number, required: true, min: 0 },
+    monthKey: { type: String, required: true },
+  },
+  { timestamps: true, collection: 'weekly goals' }
+);
+
+// Unique constraint: one goal per agent + order + week (upsert key)
+agentGoalSchema.index({ agentId: 1, orderId: 1, weekStartDate: 1 }, { unique: true });
 
 const AgentGoals: Model<IAgentGoals> = mongoose.model<IAgentGoals>('AgentGoal', agentGoalSchema);
 

@@ -109,7 +109,7 @@ app.use('/api/v1/agentstats', agentStatsRouter);
 app.use('/api/v1/agentCaseInfo', agentCaseInfoRouter);
 app.use('/api/v1/agent', agentRouter);
 app.use('/api/v1/cases', casesRouter);
-app.use('/api/v1/agentgoals', agentGoalsRouter);
+app.use("/api/v1/agentGoals", agentGoalsRouter);
 app.use('/api/v1/gcCases', caseRouter);
 app.use('/api/v1/gcAgents', gcAgentRouter);
 app.use('/api/v1/orders', orderRouter);
@@ -123,8 +123,8 @@ app.use("/api/v1/user", userRoutes);
 // Start the server
 if (process.env.NODE_ENV === 'development') {
   const sslOptions = {
-    key: fs.readFileSync('C:\\Users\\j_dan\\server.key'),
-    cert: fs.readFileSync('C:\\Users\\j_dan\\server.cert'),
+    key: fs.readFileSync('C:\\Users\\Jason\\server.key'),
+    cert: fs.readFileSync('C:\\Users\\Jason\\server.cert'),
   };
 
   https.createServer(sslOptions, app).listen(port, () => {

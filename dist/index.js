@@ -92,7 +92,7 @@ app.use('/api/v1/agentstats', agentStats_1.default);
 app.use('/api/v1/agentCaseInfo', agentCaseInfo_1.default);
 app.use('/api/v1/agent', agent_1.default);
 app.use('/api/v1/cases', cases_1.default);
-app.use('/api/v1/agentgoals', agentGoals_1.default);
+app.use("/api/v1/agentGoals", agentGoals_1.default);
 app.use('/api/v1/gcCases', caseRoutes_1.default);
 app.use('/api/v1/gcAgents', gcAgentRoutes_1.default);
 app.use('/api/v1/orders', orderRoutes_1.default);
@@ -104,8 +104,8 @@ app.use("/api/v1/user", user_1.default);
 // Start the server
 if (process.env.NODE_ENV === 'development') {
     const sslOptions = {
-        key: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.key'),
-        cert: fs_1.default.readFileSync('C:\\Users\\j_dan\\server.cert'),
+        key: fs_1.default.readFileSync('C:\\Users\\Jason\\server.key'),
+        cert: fs_1.default.readFileSync('C:\\Users\\Jason\\server.cert'),
     };
     https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {
         console.log(`HTTPS server is listening on https://localhost:${serverConfig_json_1.port}...`);
