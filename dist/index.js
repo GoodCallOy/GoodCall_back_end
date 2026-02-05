@@ -105,13 +105,23 @@ app.use('/api/v1/openSys', openSysRoutes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
 if (process.env.NODE_ENV === 'development') {
-    const sslOptions = {
-        key: fs_1.default.readFileSync('C:\\Users\\Jason\\server.key'),
-        cert: fs_1.default.readFileSync('C:\\Users\\Jason\\server.cert'),
-    };
-    https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {
-        console.log(`HTTPS server is listening on https://localhost:${serverConfig_json_1.port}...`);
-    });
+    const keyPath = process.env.SSL_KEY_PATH;
+    const certPath = process.env.SSL_CERT_PATH;
+    if (keyPath && certPath && fs_1.default.existsSync(keyPath) && fs_1.default.existsSync(certPath)) {
+        const sslOptions = {
+            key: fs_1.default.readFileSync(keyPath),
+            cert: fs_1.default.readFileSync(certPath),
+        };
+        https_1.default.createServer(sslOptions, app).listen(serverConfig_json_1.port, () => {
+            console.log(`HTTPS server is listening on https://localhost:${serverConfig_json_1.port}...`);
+        });
+    }
+    else {
+        console.warn('SSL_KEY_PATH / SSL_CERT_PATH not set or files missing – falling back to HTTP');
+        app.listen(serverConfig_json_1.port, () => {
+            console.log(`HTTP server is listening on http://localhost:${serverConfig_json_1.port}...`);
+        });
+    }
 }
 else {
     app.listen(serverConfig_json_1.port, () => {

@@ -124,14 +124,24 @@ app.use("/api/v1/user", userRoutes);
 
 // Start the server
 if (process.env.NODE_ENV === 'development') {
-  const sslOptions = {
-    key: fs.readFileSync('C:\\Users\\Jason\\server.key'),
-    cert: fs.readFileSync('C:\\Users\\Jason\\server.cert'),
-  };
+  const keyPath = process.env.SSL_KEY_PATH
+  const certPath = process.env.SSL_CERT_PATH
 
-  https.createServer(sslOptions, app).listen(port, () => {
-    console.log(`HTTPS server is listening on https://localhost:${port}...`);
-  });
+  if (keyPath && certPath && fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    const sslOptions = {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath),
+    }
+
+    https.createServer(sslOptions, app).listen(port, () => {
+      console.log(`HTTPS server is listening on https://localhost:${port}...`);
+    });
+  } else {
+    console.warn('SSL_KEY_PATH / SSL_CERT_PATH not set or files missing – falling back to HTTP')
+    app.listen(port, () => {
+      console.log(`HTTP server is listening on http://localhost:${port}...`);
+    });
+  }
 } else {
   app.listen(port, () => {
     console.log(`HTTP server is listening on http://localhost:${port}...`);

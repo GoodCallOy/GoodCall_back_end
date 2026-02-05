@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import Cases from "../models/cases";
 import ICases from "../types/ICases";
+import Order from "../models/orders";
+import DailyLog from "../models/dailyLog";
+import AgentGoals from "../models/agentGoals";
 export const getAllCases = async (req: Request, res: Response) => {
   try {
     
@@ -60,7 +63,59 @@ export const modifyCase = async (req: Request, res: Response) => {
   const updatedCaseData: Partial<ICases> = req.body;
 
   try {
-    const modifiedCase = await Cases.findByIdAndUpdate(CaseId, updatedCaseData, { new: true });
+    // Fetch existing case to compare name
+    const existingCase = await Cases.findById(CaseId);
+    if (!existingCase) {
+      return res.status(404).json({ error: 'caseId not found' });
+    }
+
+    const modifiedCase = await Cases.findByIdAndUpdate(
+      CaseId,
+      updatedCaseData,
+      { new: true }
+    );
+
+    if (!modifiedCase) {
+      return res.status(404).json({ error: 'caseId not found after update' });
+    }
+
+    // If name changed, cascade update to related collections that denormalize caseName
+    const oldName = existingCase.name;
+    const newName = updatedCaseData.name ?? modifiedCase.name;
+
+    if (newName && newName !== oldName) {
+      try {
+        // 1) Orders: update caseName where caseId matches
+        await Order.updateMany(
+          { caseId: modifiedCase._id },
+          { $set: { caseName: newName } }
+        );
+
+        // 2) Daily logs: find orders for this case, then update logs by order ref
+        const ordersForCase = await Order.find({ caseId: modifiedCase._id }).select("_id");
+        const orderIds = ordersForCase.map(o => o._id);
+        if (orderIds.length > 0) {
+          await DailyLog.updateMany(
+            { order: { $in: orderIds } },
+            { $set: { caseName: newName } }
+          );
+        }
+
+        // 3) Weekly goals: stored by caseName string; update where old name matches
+        await AgentGoals.updateMany(
+          { caseName: oldName },
+          { $set: { caseName: newName } }
+        );
+
+        console.log(
+          `Cascade caseName change "${oldName}" -> "${newName}" on orders, daily logs, weekly goals`
+        );
+      } catch (cascadeErr) {
+        console.error("Error during caseName cascade update:", cascadeErr);
+        // Do not fail the main request just because cascade failed
+      }
+    }
+
     res.status(200).json({ message: 'Case modified successfully.', modifiedCase });
   } catch (error) {
     console.error('Error modifying case:', error);
