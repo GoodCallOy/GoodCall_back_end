@@ -29,6 +29,7 @@ import caseTypeRoutes from './src/routes/caseTypeRoutes'
 import weekConfigurationRoutes from './src/routes/weekConfigurationRoutes'
 import weekConfigRoutes from './src/routes/weekConfigRoutes'
 import openSysRoutes from './src/routes/openSysRoutes'
+import canceledCallRoutes from './src/routes/canceledCallRoutes'
 
 dotenv.config();
 
@@ -119,6 +120,7 @@ app.use('/api/v1', caseTypeRoutes)
 app.use('/api/v1/week-configurations', weekConfigurationRoutes);
 app.use('/api/v1/week-config', weekConfigRoutes);
 app.use('/api/v1/openSys', openSysRoutes);
+app.use('/api/v1/canceledCalls', canceledCallRoutes);
 
 app.use("/api/v1/user", userRoutes);
 
