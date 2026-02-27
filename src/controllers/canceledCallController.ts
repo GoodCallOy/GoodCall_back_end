@@ -13,7 +13,7 @@ function validateBody(body: any): string | null {
   return null;
 }
 
-/** POST /api/v1/canceledCalls - create a canceled call record */
+/** POST /api/v1/canceledCalls - create a canceled meeting record */
 export const createCanceledCall = async (req: Request, res: Response) => {
   try {
     const body = req.body as ICanceledCallCreateBody;
@@ -26,7 +26,6 @@ export const createCanceledCall = async (req: Request, res: Response) => {
       callDate: new Date(body.callDate),
       cancelDate: new Date(body.cancelDate),
       agent: body.agent,
-      company: body.company ?? '',
       phoneNumber: body.phoneNumber ?? '',
       contactPerson: body.contactPerson ?? '',
       case: body.case ?? '',
@@ -37,23 +36,22 @@ export const createCanceledCall = async (req: Request, res: Response) => {
       comments: body.comments ?? '',
     });
 
-    console.log('[Canceled calls] Saved:', {
+    console.log('[Canceled meetings] Saved:', {
       callDate: doc.callDate.toISOString().slice(0, 10),
       cancelDate: doc.cancelDate.toISOString().slice(0, 10),
       agent: doc.agent,
-      company: doc.company,
       case: doc.case,
       attempts: doc.attempts,
     });
 
     return res.status(201).json(doc);
   } catch (err: any) {
-    console.error('Error creating canceled call:', err.message);
-    return res.status(400).json({ message: err.message || 'Failed to save canceled call' });
+    console.error('Error creating canceled meeting:', err.message);
+    return res.status(400).json({ message: err.message || 'Failed to save canceled meeting' });
   }
 };
 
-/** PATCH /api/v1/canceledCalls/:id - update a canceled call by ID */
+/** PATCH /api/v1/canceledCalls/:id - update a canceled meeting by ID */
 export const updateCanceledCall = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
@@ -67,7 +65,6 @@ export const updateCanceledCall = async (req: Request, res: Response) => {
       callDate: new Date(body.callDate),
       cancelDate: new Date(body.cancelDate),
       agent: body.agent,
-      company: body.company ?? '',
       phoneNumber: body.phoneNumber ?? '',
       contactPerson: body.contactPerson ?? '',
       case: body.case ?? '',
@@ -80,19 +77,19 @@ export const updateCanceledCall = async (req: Request, res: Response) => {
 
     const doc = await CanceledCall.findByIdAndUpdate(id, update, { new: true, runValidators: true });
     if (!doc) {
-      return res.status(404).json({ message: 'Canceled call not found' });
+      return res.status(404).json({ message: 'Canceled meeting not found' });
     }
 
-    console.log('[Canceled calls] Updated:', { id: doc._id, callDate: doc.callDate.toISOString().slice(0, 10), agent: doc.agent });
+    console.log('[Canceled meetings] Updated:', { id: doc._id, callDate: doc.callDate.toISOString().slice(0, 10), agent: doc.agent });
 
     return res.status(200).json(doc);
   } catch (err: any) {
-    console.error('Error updating canceled call:', err.message);
-    return res.status(400).json({ message: err.message || 'Failed to update canceled call' });
+    console.error('Error updating canceled meeting:', err.message);
+    return res.status(400).json({ message: err.message || 'Failed to update canceled meeting' });
   }
 };
 
-/** GET /api/v1/canceledCalls - list canceled calls (optional query: agent, case, fromDate, toDate) */
+/** GET /api/v1/canceledCalls - list canceled meetings (optional query: agent, case, fromDate, toDate) */
 export const listCanceledCalls = async (req: Request, res: Response) => {
   try {
     const { agent, case: caseId, fromDate, toDate } = req.query;
@@ -112,7 +109,7 @@ export const listCanceledCalls = async (req: Request, res: Response) => {
     const list = await CanceledCall.find(filter).sort({ callDate: -1 });
     return res.status(200).json(list);
   } catch (err: any) {
-    console.error('Error listing canceled calls:', err.message);
+    console.error('Error listing canceled meetings:', err.message);
     return res.status(500).json({ message: err.message });
   }
 };

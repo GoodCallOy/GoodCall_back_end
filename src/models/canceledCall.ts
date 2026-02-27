@@ -6,7 +6,6 @@ const canceledCallSchema = new Schema<ICanceledCall>(
     callDate: { type: Date, required: true },
     cancelDate: { type: Date, required: true },
     agent: { type: String, required: true },
-    company: { type: String, default: '' },
     phoneNumber: { type: String, default: '' },
     contactPerson: { type: String, default: '' },
     case: { type: String, default: '' },
@@ -16,7 +15,7 @@ const canceledCallSchema = new Schema<ICanceledCall>(
     attempts: { type: Number, default: 0 },
     comments: { type: String, default: '' },
   },
-  { timestamps: true, collection: 'canceled calls' }
+  { timestamps: true, collection: 'canceled meetings' }
 );
 
 const CanceledCall: Model<ICanceledCall> = mongoose.model<ICanceledCall>('CanceledCall', canceledCallSchema);

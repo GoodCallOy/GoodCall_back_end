@@ -4,7 +4,6 @@ export interface ICanceledCall extends Document {
   callDate: Date;
   cancelDate: Date;
   agent: string;
-  company?: string;
   phoneNumber?: string;
   contactPerson?: string;
   case?: string;
@@ -22,7 +21,6 @@ export interface ICanceledCallCreateBody {
   callDate: string;       // YYYY-MM-DD
   cancelDate: string;     // YYYY-MM-DD
   agent: string;          // gcAgent ID
-  company?: string;
   phoneNumber?: string;
   contactPerson?: string;
   case?: string;           // order/case ID
