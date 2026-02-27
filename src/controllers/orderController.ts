@@ -106,6 +106,7 @@ export const createOrder = async (req: Request, res: Response) => {
       caseUnit: req.body.caseUnit,
       pricePerUnit: req.body.pricePerUnit,
       totalQuantity: req.body.totalQuantity,
+      campaignGoal: req.body.campaignGoal ?? 0,
       startDate: req.body.startDate || new Date(), // Default to current date if not provided
       deadline: req.body.deadline,
       orderStatus: req.body.orderStatus || 'pending',
@@ -208,6 +209,9 @@ export const updateOrder = async (req: Request, res: Response) => {
   }
   if (typeof updatedData.deadline === 'string') {
     updatedData.deadline = new Date(updatedData.deadline)
+  }
+  if (updatedData.campaignGoal !== undefined) {
+    updatedData.campaignGoal = Number(updatedData.campaignGoal)
   }
 
   try {

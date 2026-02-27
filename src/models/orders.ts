@@ -10,6 +10,7 @@ export interface IOrder extends Document {
   caseUnit: caseUnit
   pricePerUnit: number
   totalQuantity: number
+  campaignGoal?: number
   startDate: Date 
   deadline: Date
   orderStatus: OrderStatus
@@ -56,6 +57,11 @@ const OrderSchema: Schema = new Schema<IOrder>(
     totalQuantity: {
       type: Number,
       required: true
+    },
+    campaignGoal: {
+      type: Number,
+      required: false,
+      default: 0
     },
     startDate: {
       type: Date,
