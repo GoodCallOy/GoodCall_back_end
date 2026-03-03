@@ -19,7 +19,7 @@ export interface IOrder extends Document {
   ProjectStartFee?: number
   estimatedRevenue: number
   assignedCallers: Types.ObjectId[]
-  agentGoals: Record<string, number> 
+  agentGoals: Record<string, number>
   agentRates?: Record<string, number>
   agentAssignments?: Array<{
     id: string
@@ -30,6 +30,7 @@ export interface IOrder extends Document {
   managers?: Types.ObjectId[]
   agentsPrice?: Record<string, number>
   searchedPhoneNumbers?: boolean
+  monthlyRevenueGoals?: unknown
   createdAt: Date
   updatedAt: Date
 }
@@ -132,6 +133,10 @@ const OrderSchema: Schema = new Schema<IOrder>(
     searchedPhoneNumbers: {
       type: Boolean,
       default: false
+    },
+    monthlyRevenueGoals: {
+      type: Schema.Types.Mixed,
+      default: undefined
     }
   },
   { timestamps: true }

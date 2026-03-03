@@ -41,6 +41,7 @@ export const getOrderById = async (req: Request, res: Response) => {
       const data = order.toObject()
       // aliases/output helpers expected by frontend
       ;(data as any).enableSearchedPhoneNumbers = Boolean((data as any).searchedPhoneNumbers)
+      ;(data as any).monthlyGoal = (data as any).totalQuantity
       ;(data as any).startDateISO = data.startDate ? new Date(data.startDate).toISOString() : null
       ;(data as any).deadlineISO = data.deadline ? new Date(data.deadline).toISOString() : null
       // Remove the original field to avoid confusion
@@ -100,12 +101,17 @@ export const createOrder = async (req: Request, res: Response) => {
     }
 
     // Handle optional managers field - accept array of { id, name } or ids
+    // Front end sends monthlyGoal (form.totalQuantity); totalQuantity excluded from payload
+    const totalQuantity = req.body.monthlyGoal ?? req.body.totalQuantity
+    if (totalQuantity === undefined || totalQuantity === null) {
+      return res.status(400).json({ message: 'monthlyGoal or totalQuantity is required' })
+    }
     const orderData: any = {
       caseId: req.body.caseId,
       caseName: req.body.caseName,
       caseUnit: req.body.caseUnit,
       pricePerUnit: req.body.pricePerUnit,
-      totalQuantity: req.body.totalQuantity,
+      totalQuantity,
       campaignGoal: req.body.campaignGoal ?? 0,
       startDate: req.body.startDate || new Date(), // Default to current date if not provided
       deadline: req.body.deadline,
@@ -117,7 +123,8 @@ export const createOrder = async (req: Request, res: Response) => {
       assignedCallers: assignedCallers,
       agentGoals: req.body.agentGoals || {},
       agentsPrice: req.body.agentPrices || {},
-      searchedPhoneNumbers: Boolean(req.body.searchedPhoneNumbers) === true
+      searchedPhoneNumbers: Boolean(req.body.enableSearchedPhoneNumbers ?? req.body.searchedPhoneNumbers) === true,
+      monthlyRevenueGoals: req.body.monthlyRevenueGoals
     }
     if (req.body.managers) {
       if (Array.isArray(req.body.managers)) {
@@ -200,9 +207,18 @@ export const createOrder = async (req: Request, res: Response) => {
 export const updateOrder = async (req: Request, res: Response) => {
   const orderId = req.params.id
   const updatedData = { ...req.body }
+  // Front end sends monthlyGoal instead of totalQuantity
+  if (updatedData.monthlyGoal !== undefined) {
+    updatedData.totalQuantity = Number(updatedData.monthlyGoal)
+    delete (updatedData as any).monthlyGoal
+  }
   // normalize booleans and dates for update
   if (updatedData.searchedPhoneNumbers !== undefined) {
     updatedData.searchedPhoneNumbers = Boolean(updatedData.searchedPhoneNumbers) === true
+  }
+  if (updatedData.enableSearchedPhoneNumbers !== undefined) {
+    updatedData.searchedPhoneNumbers = Boolean(updatedData.enableSearchedPhoneNumbers) === true
+    delete (updatedData as any).enableSearchedPhoneNumbers
   }
   if (typeof updatedData.startDate === 'string') {
     updatedData.startDate = new Date(updatedData.startDate)

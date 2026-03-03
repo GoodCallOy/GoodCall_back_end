@@ -113,3 +113,31 @@ export const listCanceledCalls = async (req: Request, res: Response) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
+/** GET /api/v1/canceledCalls/summary?agentId=xxx - counts for agent dashboard (canceled meetings, rebooked meetings) */
+export const getCanceledMeetingsSummary = async (req: Request, res: Response) => {
+  try {
+    const agentId = req.query.agentId as string | undefined;
+    if (!agentId) {
+      return res.status(400).json({ message: 'agentId query is required' });
+    }
+
+    const canceledMeetings = await CanceledCall.countDocuments({ agent: agentId });
+
+    const rebookedMeetings = await CanceledCall.countDocuments({
+      agent: agentId,
+      $or: [
+        { rebookDate: { $exists: true, $nin: [null, ''] } },
+        { rebookAgent: { $exists: true, $nin: [null, ''] } },
+      ],
+    });
+
+    return res.status(200).json({
+      canceledMeetings,
+      rebookedMeetings,
+    });
+  } catch (err: any) {
+    console.error('Error fetching canceled meetings summary:', err.message);
+    return res.status(500).json({ message: err.message });
+  }
+};
