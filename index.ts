@@ -30,6 +30,7 @@ import weekConfigurationRoutes from './src/routes/weekConfigurationRoutes'
 import weekConfigRoutes from './src/routes/weekConfigRoutes'
 import openSysRoutes from './src/routes/openSysRoutes'
 import canceledCallRoutes from './src/routes/canceledCallRoutes'
+import agentWeeklyNotesRoutes from './src/routes/agentWeeklyNotes'
 
 dotenv.config();
 
@@ -121,6 +122,9 @@ app.use('/api/v1/week-configurations', weekConfigurationRoutes);
 app.use('/api/v1/week-config', weekConfigRoutes);
 app.use('/api/v1/openSys', openSysRoutes);
 app.use('/api/v1/canceledCalls', canceledCallRoutes);
+// Support both camelCase and kebab-case paths for weekly notes
+app.use('/api/v1/agent-weekly-notes', agentWeeklyNotesRoutes);
+app.use('/api/v1/agentWeeklyNotes', agentWeeklyNotesRoutes);
 
 app.use("/api/v1/user", userRoutes);
 

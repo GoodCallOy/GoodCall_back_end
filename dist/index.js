@@ -33,6 +33,7 @@ const weekConfigurationRoutes_1 = __importDefault(require("./src/routes/weekConf
 const weekConfigRoutes_1 = __importDefault(require("./src/routes/weekConfigRoutes"));
 const openSysRoutes_1 = __importDefault(require("./src/routes/openSysRoutes"));
 const canceledCallRoutes_1 = __importDefault(require("./src/routes/canceledCallRoutes"));
+const agentWeeklyNotes_1 = __importDefault(require("./src/routes/agentWeeklyNotes"));
 dotenv_1.default.config();
 // Connect to the database
 (0, dbConnection_1.default)();
@@ -104,6 +105,9 @@ app.use('/api/v1/week-configurations', weekConfigurationRoutes_1.default);
 app.use('/api/v1/week-config', weekConfigRoutes_1.default);
 app.use('/api/v1/openSys', openSysRoutes_1.default);
 app.use('/api/v1/canceledCalls', canceledCallRoutes_1.default);
+// Support both camelCase and kebab-case paths for weekly notes
+app.use('/api/v1/agent-weekly-notes', agentWeeklyNotes_1.default);
+app.use('/api/v1/agentWeeklyNotes', agentWeeklyNotes_1.default);
 app.use("/api/v1/user", user_1.default);
 // Start the server
 if (process.env.NODE_ENV === 'development') {
