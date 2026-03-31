@@ -53,7 +53,28 @@ export const getAgentById = async (req: Request, res: Response) => {
 // Update agent
 export const updateAgent = async (req: Request, res: Response) => {
   try {
-    const updated = await gcAgentModel.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    // Normalize linkedUserId exactly like in createAgent
+    const rawId = (req.body as any)?.linkedUserId
+    const castLinked =
+      rawId && Types.ObjectId.isValid(rawId) ? new Types.ObjectId(rawId) : null
+
+    const payload: any = {
+      name:  req.body.name,
+      email: req.body.email,
+      role:  req.body.role,
+      active:req.body.active ?? true,
+    }
+
+    // Only include linkedUserId if it was provided explicitly in the body
+    if (rawId !== undefined) {
+      payload.linkedUserId = castLinked
+    }
+
+    const updated = await gcAgentModel.findByIdAndUpdate(
+      req.params.id,
+      payload,
+      { new: true, runValidators: true }
+    )
     if (!updated) return res.status(404).json({ message: 'Agent not found' })
     res.json(updated)
   } catch (err) {
