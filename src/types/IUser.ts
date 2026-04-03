@@ -7,7 +7,7 @@ interface IUser extends Document {
     name: string;
     email?: string;
     avatar: string;
-    linkedUserId?: string;
+    linkedUserId?: string; // gcAgent _id when linked
     access?: string;
     role?: string;
 }
