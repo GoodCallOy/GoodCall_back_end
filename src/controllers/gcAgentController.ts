@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import mongoose, { Types } from 'mongoose';
 import gcAgentModel from '../models/gcAgent'
+import User from '../models/user'
 
 // Create a new agent
 export const createAgent = async (req: Request, res: Response) => {
@@ -19,7 +20,14 @@ export const createAgent = async (req: Request, res: Response) => {
       role:  req.body.role,
       active:req.body.active ?? true,
       linkedUserId: castLinked,            // <-- assign explicitly
-    });
+    })
+
+    if (castLinked) {
+      await User.findByIdAndUpdate(castLinked, {
+        $set: { role: agent.role, linkedUserId: agent._id },
+      })
+      console.log('[gcAgents POST] Synced User (role + linkedUserId → gcAgent):', String(castLinked))
+    }
 
     console.log('CREATED AGENT:', agent);
     res.status(201).json(agent);
@@ -53,6 +61,15 @@ export const getAgentById = async (req: Request, res: Response) => {
 // Update agent
 export const updateAgent = async (req: Request, res: Response) => {
   try {
+    console.log('[gcAgents PUT] Incoming from frontend:', {
+      agentId: req.params.id,
+      name: req.body?.name,
+      email: req.body?.email,
+      role: req.body?.role,
+      active: req.body?.active,
+      linkedUserId: req.body?.linkedUserId,
+    })
+
     // Normalize linkedUserId exactly like in createAgent
     const rawId = (req.body as any)?.linkedUserId
     const castLinked =
@@ -70,12 +87,47 @@ export const updateAgent = async (req: Request, res: Response) => {
       payload.linkedUserId = castLinked
     }
 
+    const existing = await gcAgentModel.findById(req.params.id).select('linkedUserId').lean()
+    const oldLinked = existing?.linkedUserId ? String(existing.linkedUserId) : null
+
     const updated = await gcAgentModel.findByIdAndUpdate(
       req.params.id,
       payload,
       { new: true, runValidators: true }
     )
     if (!updated) return res.status(404).json({ message: 'Agent not found' })
+
+    const newLinked = updated.linkedUserId ? String(updated.linkedUserId) : null
+
+    // Unlink or switch link: clear linkedUserId (gcAgent ref) on previous Google user
+    if (oldLinked && oldLinked !== newLinked) {
+      await User.findByIdAndUpdate(oldLinked, { $unset: { linkedUserId: 1 } })
+      console.log('[gcAgents PUT] Cleared linkedUserId on previous user:', oldLinked)
+    }
+
+    // Linked Google user: only role + linkedUserId (gcAgent _id); never name/email/avatar
+    if (newLinked) {
+      const sync = await User.findByIdAndUpdate(
+        newLinked,
+        {
+          $set: {
+            role: updated.role,
+            linkedUserId: updated._id,
+          },
+        },
+        { new: true }
+      )
+      if (sync) {
+        console.log('[gcAgents PUT] Synced User:', {
+          userId: String(sync._id),
+          role: sync.role,
+          linkedUserId: String(sync.linkedUserId ?? ''),
+        })
+      } else {
+        console.warn('[gcAgents PUT] linkedUserId set but no User found:', newLinked)
+      }
+    }
+
     res.json(updated)
   } catch (err) {
     res.status(400).json({ message: 'Failed to update agent', error: err })

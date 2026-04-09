@@ -9,7 +9,8 @@ const UserSchema = new Schema({
   avatar:   { type: String, required: true },
   access:   { type: String },
   role:     { type: String, enum: ['admin', 'manager', 'caller'], default: 'caller', required: true },
-  linkedUserId: { type: Schema.Types.ObjectId, ref: 'User', default: null, index: true },
+  // Points at the linked gcAgent profile (inverse of gcAgent.linkedUserId → this User)
+  linkedUserId: { type: Schema.Types.ObjectId, ref: 'gcAgent', default: null, index: true },
 
 }, { timestamps: true });
 

@@ -6,7 +6,6 @@ export async function listCaseTypes(req: Request, res: Response) {
     .sort({ sortOrder: 1, labelLower: 1 })
     .lean()
   const labels = docs.map(d => d.label)
-  console.log('GET /api/v1/case-types ->', labels)
   return res.status(200).json(labels)
 }
 

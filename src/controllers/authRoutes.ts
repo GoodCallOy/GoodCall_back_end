@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import passport from 'passport'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
+import User from '../models/user'
 
 dotenv.config()
 
@@ -103,7 +104,7 @@ export const testAuth = (req: Request, res: Response) => {
       }
     })
 }
-export const isAuthenticated = (req: Request, res: Response) => {
+export const isAuthenticated = async (req: Request, res: Response) => {
   const token = req.cookies.token;
   if (!token) {
     console.warn('Auth /me: missing token cookie', {
@@ -115,9 +116,38 @@ export const isAuthenticated = (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    // Optionally, fetch user from DB here if you want more info
-    return res.json({ user: decoded });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload & {
+      id?: string
+      _id?: string
+      role?: string
+      name?: string
+      email?: string
+      avatar?: string
+      linkedUserId?: string | null
+    }
+    const userId = decoded.id ?? decoded._id
+    if (!userId) {
+      return res.status(401).json({ message: 'Invalid token payload' })
+    }
+
+    const fresh = await User.findById(userId)
+      .select('name email avatar role linkedUserId')
+      .lean()
+
+    if (!fresh) {
+      return res.status(401).json({ message: 'User not found' })
+    }
+
+    const user = {
+      id: String(fresh._id),
+      name: fresh.name,
+      email: fresh.email,
+      avatar: fresh.avatar,
+      role: fresh.role,
+      linkedUserId: fresh.linkedUserId ? String(fresh.linkedUserId) : null,
+    }
+
+    return res.json({ user })
   } catch (err) {
     console.warn('Auth /me: invalid token', { error: (err as any)?.message });
     return res.status(401).json({ message: 'Invalid token' });
