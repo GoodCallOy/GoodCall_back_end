@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/user";
+import { Types } from "mongoose";
 import { AuthRequest } from "../types/express"; // Ensure you're using the correct type
 
 export const getCurrentUser = async (req: Request, res: Response) => {
@@ -18,9 +19,25 @@ export const updatedUser = async (req: Request, res: Response) => {
     try {
       // Type req.body to match the User model fields
       console.log("🔵 updatedUser called with body:", req.body);
+
+      const body: any = { ...req.body };
+
+      // Normalize linkedUserId: expect a User _id string, store as ObjectId or null
+      if (body.linkedUserId !== undefined) {
+        const raw = body.linkedUserId;
+        if (raw && typeof raw === 'string' && Types.ObjectId.isValid(raw)) {
+          body.linkedUserId = new Types.ObjectId(raw);
+        } else if (raw === null || raw === '' || raw === undefined) {
+          body.linkedUserId = null;
+        } else {
+          console.warn('updatedUser: invalid linkedUserId received, setting to null', raw);
+          body.linkedUserId = null;
+        }
+      }
+
       const updatedUser = await User.findByIdAndUpdate(
-        (req.body as any)._id, // req.user should be typed as IUser here
-        req.body, // Make sure req.body contains the correct fields
+        body._id, // req.user should be typed as IUser here
+        body, // Make sure body contains the correct fields
         { new: true, runValidators: true }
       );
   
