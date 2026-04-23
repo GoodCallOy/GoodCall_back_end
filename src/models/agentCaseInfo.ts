@@ -32,6 +32,11 @@ const agentGoalSchema = new Schema<IAgentCaseInfo>({
     }
 }, { timestamps: true }); // Auto-manages `createdAt` and `updatedAt`
 
+// Common dashboard query path: filter by agent and month
+agentGoalSchema.index({ agent: 1, monthKey: 1 });
+// Useful for date-range scans
+agentGoalSchema.index({ monthKey: 1, "amount_date.start": 1, "amount_date.end": 1 });
+
 const IAgentCaseInfo: Model<IAgentCaseInfo> = mongoose.model<IAgentCaseInfo>('IAgentCaseInfo', agentGoalSchema);
 
 export default IAgentCaseInfo;

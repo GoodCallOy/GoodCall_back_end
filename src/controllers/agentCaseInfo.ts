@@ -4,7 +4,7 @@ import IAagentCaseInfo from "../types/IAgentCaseInfo";
 
 export const getAllAgentCaseInfo = async (req: Request, res: Response) => {
   try {
-    const allAgents = await agentCaseInfo.find();
+    const allAgents = await agentCaseInfo.find().lean();
     res.status(200).json(allAgents);
   } catch (err: any) {
     res.status(400).json({
@@ -20,7 +20,7 @@ export const getAgentCaseInfoById = async (req: Request, res: Response) => {
 
   try {
     console.log("getting agent case info by id", agentId);
-    const agent: IAagentCaseInfo | null = await agentCaseInfo.findById(agentId);
+    const agent: IAagentCaseInfo | null = await agentCaseInfo.findById(agentId).lean();
     if (!agent) {
       return res.status(404).json({ error: 'agent case info Id not found' });
     }
@@ -79,7 +79,7 @@ export const getAgentCaseInfoByAgentAndMonth = async (req: Request, res: Respons
     const goals = await agentCaseInfo.find({
         agent: agent,
         monthKey: month,
-    });
+    }).lean();
     console.log("goals", goals);
     res.json(goals);
 } catch (error) {

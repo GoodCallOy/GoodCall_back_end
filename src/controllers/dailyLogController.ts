@@ -4,7 +4,10 @@ import DailyLog from '../models/dailyLog'
 // Get all daily logs
 export const getAllDailyLogs = async (_req: Request, res: Response) => {
   try {
-    const logs = await DailyLog.find().populate('agent').populate('order')
+    // Avoid expensive populate on full-list endpoint
+    const logs = await DailyLog.find()
+      .select('agent agentName order caseName caseUnit date quantityCompleted completed_calls outgoing_calls answered_calls response_rate')
+      .lean()
     res.status(200).json(logs)
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch logs', error: err })
@@ -14,7 +17,10 @@ export const getAllDailyLogs = async (_req: Request, res: Response) => {
 // Get daily logs by agent ID
 export const getLogsByAgentId = async (req: Request, res: Response) => {
   try {
-    const logs = await DailyLog.find({ agentId: req.params.agentId }).populate('orderId')
+    // Note: field is "agent" (ObjectId), not "agentId"
+    const logs = await DailyLog.find({ agent: req.params.agentId })
+      .select('agent agentName order caseName caseUnit date quantityCompleted completed_calls outgoing_calls answered_calls response_rate')
+      .lean()
     res.status(200).json(logs)
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch agent logs', error: err })
@@ -41,7 +47,7 @@ export const getLogsByCase = async (req: Request, res: Response) => {
     const logs = await DailyLog.find({
       caseName,
       ...dateFilter,
-    });
+    }).lean();
     res.json(logs);
   } catch (err) {
     res.status(500).json({ message: 'Failed to find log', error: err });

@@ -142,4 +142,9 @@ const OrderSchema: Schema = new Schema<IOrder>(
   { timestamps: true }
 )
 
+// Common dashboard query patterns
+OrderSchema.index({ startDate: 1, deadline: 1 })
+OrderSchema.index({ assignedCallers: 1 })
+OrderSchema.index({ caseId: 1, startDate: 1 })
+
 export default mongoose.model<IOrder>('Order', OrderSchema)

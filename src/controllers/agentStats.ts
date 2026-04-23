@@ -3,8 +3,7 @@ import AgentStats from "../models/agentStats";
 import IAgent from "../types/IAgentStats";
 export const getAllAgentStats = async (req: Request, res: Response) => {
   try {
-    
-    const allAgents = await AgentStats.find();
+    const allAgents = await AgentStats.find().lean();
     res.status(200).json(allAgents);
   } catch (err: any) {
     res.status(400).json({
@@ -20,7 +19,7 @@ export const getAgentStatsById = async (req: Request, res: Response) => {
 
   try {
     console.log("getting agent by id", agentId);
-    const agent: IAgent | null = await AgentStats.findById(agentId);
+    const agent: IAgent | null = await AgentStats.findById(agentId).lean();
     if (!agent) {
       return res.status(404).json({ error: 'agentId not found' });
     }

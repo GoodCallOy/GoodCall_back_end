@@ -98,4 +98,9 @@ const DailyLogSchema: Schema = new Schema<IDailyLog>(
   { timestamps: true }
 )
 
+// Common dashboard filters
+DailyLogSchema.index({ agent: 1, date: 1 })
+DailyLogSchema.index({ order: 1, date: 1 })
+DailyLogSchema.index({ caseName: 1, date: 1 })
+
 export default mongoose.model<IDailyLog>('DailyLog', DailyLogSchema)
