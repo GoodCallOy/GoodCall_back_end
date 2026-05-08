@@ -5,9 +5,7 @@ import User from '../models/user'
 
 // Create a new agent
 export const createAgent = async (req: Request, res: Response) => {
-  console.log('REQ BODY:', req.body);
   try {
-    console.log('REQ BODY2:', req.body, 'linkedUserId type:', typeof req.body?.linkedUserId);
 
     // Explicitly coerce/cast the id (if provided)
     const rawId = req.body?.linkedUserId;
@@ -29,7 +27,6 @@ export const createAgent = async (req: Request, res: Response) => {
       console.log('[gcAgents POST] Synced User (role + linkedUserId → gcAgent):', String(castLinked))
     }
 
-    console.log('CREATED AGENT:', agent);
     res.status(201).json(agent);
   } catch (err) {
     console.error('CREATE ERROR:', err);
@@ -61,6 +58,7 @@ export const getAgentById = async (req: Request, res: Response) => {
 // Update agent
 export const updateAgent = async (req: Request, res: Response) => {
   try {
+    console.log('[gcAgents PUT] Keys received:', Object.keys(req.body || {}))
     console.log('[gcAgents PUT] Incoming from frontend:', {
       agentId: req.params.id,
       name: req.body?.name,
@@ -69,23 +67,36 @@ export const updateAgent = async (req: Request, res: Response) => {
       active: req.body?.active,
       linkedUserId: req.body?.linkedUserId,
     })
+    console.log('[gcAgents PUT] Raw body:', req.body)
+    console.log('[gcAgents PUT] ID sanity:', {
+      routeAgentId: req.params.id,
+      bodyId: (req.body as any)?._id,
+      bodyLinkedUserId: (req.body as any)?.linkedUserId,
+    })
 
     // Normalize linkedUserId exactly like in createAgent
     const rawId = (req.body as any)?.linkedUserId
     const castLinked =
       rawId && Types.ObjectId.isValid(rawId) ? new Types.ObjectId(rawId) : null
+    console.log('[gcAgents PUT] linkedUserId normalize:', {
+      rawId,
+      rawType: typeof rawId,
+      isValidObjectId: !!(rawId && Types.ObjectId.isValid(rawId)),
+      castLinked: castLinked ? String(castLinked) : null,
+    })
 
-    const payload: any = {
-      name:  req.body.name,
-      email: req.body.email,
-      role:  req.body.role,
-      active:req.body.active ?? true,
-    }
+    // Build a partial update payload; only write fields explicitly provided
+    const payload: any = {}
+    if (req.body.name !== undefined) payload.name = req.body.name
+    if (req.body.email !== undefined) payload.email = req.body.email
+    if (req.body.role !== undefined) payload.role = req.body.role
+    if (req.body.active !== undefined) payload.active = req.body.active
 
     // Only include linkedUserId if it was provided explicitly in the body
     if (rawId !== undefined) {
       payload.linkedUserId = castLinked
     }
+    console.log('[gcAgents PUT] Final update payload:', payload)
 
     const existing = await gcAgentModel.findById(req.params.id).select('linkedUserId').lean()
     const oldLinked = existing?.linkedUserId ? String(existing.linkedUserId) : null
@@ -128,9 +139,18 @@ export const updateAgent = async (req: Request, res: Response) => {
       }
     }
 
+    console.log('[gcAgents PUT] Updated gcAgent in DB:', {
+      _id: String(updated._id),
+      name: updated.name,
+      email: updated.email,
+      role: updated.role,
+      active: updated.active,
+      linkedUserId: updated.linkedUserId ? String(updated.linkedUserId) : null,
+    })
     res.json(updated)
-  } catch (err) {
-    res.status(400).json({ message: 'Failed to update agent', error: err })
+  } catch (err: any) {
+    console.error('[gcAgents PUT] update failed:', err?.message, err)
+    res.status(400).json({ message: 'Failed to update agent', error: err?.message ?? err })
   }
 }
 

@@ -4,7 +4,6 @@ import { Types } from "mongoose";
 import { AuthRequest } from "../types/express"; // Ensure you're using the correct type
 
 export const getCurrentUser = async (req: Request, res: Response) => {
-  console.log("🔵 getCurrentUser called");
      if (!req.user) return res.status(401).json({ message: 'Not authenticated' });
     const doc = await User.findById((req.user as any).id).lean();
     if (!doc) return res.status(404).json({ message: 'User not found' });
@@ -18,7 +17,6 @@ export const updatedUser = async (req: Request, res: Response) => {
   
     try {
       // Type req.body to match the User model fields
-      console.log("🔵 updatedUser called with body:", req.body);
 
       const body: any = { ...req.body };
 
@@ -45,7 +43,6 @@ export const updatedUser = async (req: Request, res: Response) => {
         return res.status(404).json({ message: "User not found" });
       }
 
-      console.log("✅ User updated:", updatedUser);
       res.json(updatedUser);
     } catch (error) {
       res.status(500).json({ message: "Error updating user", error });
@@ -96,10 +93,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 // ✅ Get all users
 export const getAllUsers = async (_req: Request, res: Response) => {
-  console.log("🔵 getAllUsers called");
   try {
     const users = await User.find();
-    console.log("✅ Fetched users:", users);
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users", error });

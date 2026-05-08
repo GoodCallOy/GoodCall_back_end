@@ -80,7 +80,13 @@ export const modifyAgent = async (req: Request, res: Response) => {
   const updatedAgentData: Partial<IAgent> = req.body;
 
   try {
+    console.log('[agent PUT] Incoming from frontend:', {
+      agentId,
+      keys: Object.keys(req.body || {}),
+      body: req.body,
+    });
     const modifiedAgent = await Agent.findByIdAndUpdate(agentId, updatedAgentData, { new: true });
+    console.log('[agent PUT] Updated record:', modifiedAgent);
     res.status(200).json({ message: 'agent modified successfully.', modifiedAgent });
   } catch (error) {
     console.error('Error modifying agent:', error);
