@@ -2,6 +2,7 @@ import { Document } from "mongoose";
 
 interface ICases extends Document {
     name: string;
+    nickname?: string;
     billing: number;
     state: string;
     type: string;

@@ -35,6 +35,7 @@ export const addCase = async (req: Request, res: Response) => {
   try {
     const newCase = new Cases({
       name: req.body.name,
+      nickname: req.body.nickname ?? '',
       billing: req.body.billing,
       state: req.body.state,
       type: req.body.type,

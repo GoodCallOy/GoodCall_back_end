@@ -6,6 +6,11 @@ const casesSchema: Schema<ICases> = new Schema<ICases>({
       type: String,
       required: true,
     },
+    nickname: {
+      type: String,
+      required: false,
+      default: '',
+    },
     billing: {
       type: Number,
       required: false,
