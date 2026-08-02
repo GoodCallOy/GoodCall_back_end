@@ -48,3 +48,40 @@ export function parseMonthlyOrderStatus(
   }
   return { ok: true, value }
 }
+
+export function monthKeyFromDate(dateVal: unknown): string {
+  const s = String(dateVal ?? '').split('T')[0]
+  return s.length >= 7 ? s.slice(0, 7) : ''
+}
+
+export function getMonthlyOrderStatusMap(order: {
+  monthlyOrderStatus?: Record<string, OrderStatus>
+  monthly_order_status?: Record<string, OrderStatus>
+} | null | undefined): Record<string, OrderStatus> {
+  return order?.monthlyOrderStatus || order?.monthly_order_status || {}
+}
+
+export function getOrderStatusForMonth(
+  order: {
+    orderStatus?: OrderStatus
+    status?: OrderStatus
+    monthlyOrderStatus?: Record<string, OrderStatus>
+    monthly_order_status?: Record<string, OrderStatus>
+  } | null | undefined,
+  monthKey: string
+): OrderStatus {
+  if (!order) return 'pending'
+  const key = String(monthKey || '')
+  const monthly = getMonthlyOrderStatusMap(order)
+  if (key && monthly[key] != null) {
+    return normalizeOrderStatus(monthly[key]) || 'pending'
+  }
+  return normalizeOrderStatus(order.orderStatus ?? order.status) || 'pending'
+}
+
+export function areDailyLogsFrozenForOrderMonth(
+  order: Parameters<typeof getOrderStatusForMonth>[0],
+  monthKey: string
+): boolean {
+  return getOrderStatusForMonth(order, monthKey) === 'completed'
+}

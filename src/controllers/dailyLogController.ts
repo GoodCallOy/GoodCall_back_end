@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import DailyLog from '../models/dailyLog'
+import { assertDailyLogsAllowed } from '../utils/dailyLogOrderGuard'
 
 // Get all daily logs
 export const getAllDailyLogs = async (_req: Request, res: Response) => {
@@ -57,6 +58,11 @@ export const getLogsByCase = async (req: Request, res: Response) => {
 // Add a new daily log
 export const addDailyLog = async (req: Request, res: Response) => {
   try {
+    const guard = await assertDailyLogsAllowed(req.body.order, req.body.caseName, req.body.date)
+    if (!guard.ok) {
+      return res.status(guard.status).json({ message: guard.message })
+    }
+
     const { agent, agentName, order, caseName, caseUnit, call_time, completed_calls, outgoing_calls, answered_calls, response_rate, date, quantityCompleted,  } = req.body
     console.log('dailylog data:', req.body)
     const counters = {
@@ -102,6 +108,20 @@ export const addDailyLog = async (req: Request, res: Response) => {
 // Update an existing daily log
 export const updateDailyLog = async (req: Request, res: Response) => {
   try {
+    const existing = await DailyLog.findById(req.params.id).lean()
+    if (!existing) {
+      return res.status(404).json({ message: 'Log not found' })
+    }
+
+    const guard = await assertDailyLogsAllowed(
+      req.body.order ?? existing.order,
+      req.body.caseName ?? existing.caseName,
+      req.body.date ?? existing.date
+    )
+    if (!guard.ok) {
+      return res.status(guard.status).json({ message: guard.message })
+    }
+
     const updatedLog = await DailyLog.findByIdAndUpdate(req.params.id, req.body, { new: true })
     if (!updatedLog) {
       return res.status(404).json({ message: 'Log not found' })
@@ -115,6 +135,20 @@ export const updateDailyLog = async (req: Request, res: Response) => {
 // Delete a daily log
 export const deleteDailyLog = async (req: Request, res: Response) => {
   try {
+    const existing = await DailyLog.findById(req.params.id).lean()
+    if (!existing) {
+      return res.status(404).json({ message: 'Log not found' })
+    }
+
+    const guard = await assertDailyLogsAllowed(
+      existing.order,
+      existing.caseName,
+      existing.date
+    )
+    if (!guard.ok) {
+      return res.status(guard.status).json({ message: guard.message })
+    }
+
     await DailyLog.findByIdAndDelete(req.params.id)
     res.status(200).json({ message: 'Log deleted' })
   } catch (err) {
