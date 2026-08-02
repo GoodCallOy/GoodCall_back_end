@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import Order from '../models/orders'
-import { areDailyLogsFrozenForOrderMonth, monthKeyFromDate } from './orderStatusHelpers'
+import { areDailyLogsFrozenForOrderMonth, getOrderStatusForMonth, monthKeyFromDate } from './orderStatusHelpers'
 
 type GuardResult =
   | { ok: true }
@@ -31,10 +31,11 @@ export async function assertDailyLogsAllowed(
   }
 
   if (areDailyLogsFrozenForOrderMonth(order, monthKey)) {
+    const status = getOrderStatusForMonth(order, monthKey)
     return {
       ok: false,
       status: 403,
-      message: `Daily logs are frozen for "${order.caseName}" in ${monthKey} (order completed for that month)`,
+      message: `Daily logs are frozen for "${order.caseName}" in ${monthKey} (order ${status} for that month)`,
     }
   }
 

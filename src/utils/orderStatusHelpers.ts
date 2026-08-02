@@ -83,5 +83,6 @@ export function areDailyLogsFrozenForOrderMonth(
   order: Parameters<typeof getOrderStatusForMonth>[0],
   monthKey: string
 ): boolean {
-  return getOrderStatusForMonth(order, monthKey) === 'completed'
+  const status = getOrderStatusForMonth(order, monthKey)
+  return status === 'completed' || status === 'cancelled'
 }
