@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import Order from '../models/orders'
 import User from '../models/user';
 import gcAgent from '../models/gcAgent';
+import { parseMonthlyOrderStatus } from '../utils/orderStatusHelpers';
 
 type AgentOrderRow = {
   orderId: string;
@@ -126,6 +127,13 @@ export const createOrder = async (req: Request, res: Response) => {
       searchedPhoneNumbers: Boolean(req.body.enableSearchedPhoneNumbers ?? req.body.searchedPhoneNumbers) === true,
       monthlyRevenueGoals: req.body.monthlyRevenueGoals
     }
+    if (req.body.monthlyOrderStatus !== undefined) {
+      const parsed = parseMonthlyOrderStatus(req.body.monthlyOrderStatus)
+      if (!parsed.ok) {
+        return res.status(400).json({ message: parsed.error })
+      }
+      orderData.monthlyOrderStatus = parsed.value
+    }
     if (req.body.managers) {
       if (Array.isArray(req.body.managers)) {
         orderData.managers = req.body.managers
@@ -228,6 +236,13 @@ export const updateOrder = async (req: Request, res: Response) => {
   }
   if (updatedData.campaignGoal !== undefined) {
     updatedData.campaignGoal = Number(updatedData.campaignGoal)
+  }
+  if (updatedData.monthlyOrderStatus !== undefined) {
+    const parsed = parseMonthlyOrderStatus(updatedData.monthlyOrderStatus)
+    if (!parsed.ok) {
+      return res.status(400).json({ message: parsed.error })
+    }
+    updatedData.monthlyOrderStatus = parsed.value
   }
 
   try {

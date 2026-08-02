@@ -31,6 +31,7 @@ export interface IOrder extends Document {
   agentsPrice?: Record<string, number>
   searchedPhoneNumbers?: boolean
   monthlyRevenueGoals?: unknown
+  monthlyOrderStatus?: Record<string, OrderStatus>
   createdAt: Date
   updatedAt: Date
 }
@@ -135,6 +136,10 @@ const OrderSchema: Schema = new Schema<IOrder>(
       default: false
     },
     monthlyRevenueGoals: {
+      type: Schema.Types.Mixed,
+      default: undefined
+    },
+    monthlyOrderStatus: {
       type: Schema.Types.Mixed,
       default: undefined
     }
