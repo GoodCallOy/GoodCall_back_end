@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 import Order from '../models/orders'
 import User from '../models/user';
 import gcAgent from '../models/gcAgent';
-import { parseMonthlyOrderStatus } from '../utils/orderStatusHelpers';
+import { parseMonthlyOrderStatus, normalizeOrderStatus } from '../utils/orderStatusHelpers';
 
 type AgentOrderRow = {
   orderId: string;
@@ -22,6 +22,32 @@ type AgentBucket = {
   totalRevenue: number;
   orders: AgentOrderRow[];
 };
+
+function toAgentObjectId(caller: any): Types.ObjectId | null {
+  if (!caller) return null
+  if (caller instanceof Types.ObjectId) return caller
+  if (typeof caller === 'string') {
+    return Types.ObjectId.isValid(caller) ? new Types.ObjectId(caller) : null
+  }
+  const raw = caller.id ?? caller._id
+  if (raw instanceof Types.ObjectId) return raw
+  const s = String(raw ?? '')
+  if (s && Types.ObjectId.isValid(s)) return new Types.ObjectId(s)
+  return null
+}
+
+function parseAssignedCallers(raw: unknown): Types.ObjectId[] {
+  let list: unknown = raw
+  if (typeof raw === 'string') {
+    try {
+      list = JSON.parse(raw)
+    } catch {
+      return []
+    }
+  }
+  if (!Array.isArray(list)) return []
+  return list.map(toAgentObjectId).filter((id): id is Types.ObjectId => id != null)
+}
 
 // Get all orders
 export const getAllOrders = async (req: Request, res: Response) => {
@@ -63,42 +89,7 @@ export const createOrder = async (req: Request, res: Response) => {
     // Parse assignedCallers - handle both string and array formats
     let assignedCallers: Types.ObjectId[] = []
     if (req.body.assignedCallers) {
-      if (typeof req.body.assignedCallers === 'string') {
-        try {
-          // Parse the stringified JSON array
-          const parsedCallers = JSON.parse(req.body.assignedCallers)
-          if (Array.isArray(parsedCallers)) {
-            // Extract ObjectIds from the parsed array
-            assignedCallers = parsedCallers
-              .map((caller: any) => {
-                if (typeof caller === 'string') {
-                  return new Types.ObjectId(caller)
-                } else if (caller && typeof caller === 'object' && caller.id) {
-                  return new Types.ObjectId(caller.id)
-                }
-                return null
-              })
-              .filter((id: Types.ObjectId | null) => id !== null) as Types.ObjectId[]
-          }
-        } catch (parseError) {
-          console.error('Error parsing assignedCallers:', parseError)
-          return res.status(400).json({
-            message: 'Invalid assignedCallers format. Expected array of agent IDs.'
-          })
-        }
-      } else if (Array.isArray(req.body.assignedCallers)) {
-        // Handle direct array format
-        assignedCallers = req.body.assignedCallers
-          .map((caller: any) => {
-            if (typeof caller === 'string') {
-              return new Types.ObjectId(caller)
-            } else if (caller && typeof caller === 'object' && caller.id) {
-              return new Types.ObjectId(caller.id)
-            }
-            return caller // Assume it's already an ObjectId
-          })
-          .filter((id: any) => id instanceof Types.ObjectId) as Types.ObjectId[]
-      }
+      assignedCallers = parseAssignedCallers(req.body.assignedCallers)
     }
 
     // Handle optional managers field - accept array of { id, name } or ids
@@ -116,7 +107,7 @@ export const createOrder = async (req: Request, res: Response) => {
       campaignGoal: req.body.campaignGoal ?? 0,
       startDate: req.body.startDate || new Date(), // Default to current date if not provided
       deadline: req.body.deadline,
-      orderStatus: req.body.orderStatus || 'pending',
+      orderStatus: normalizeOrderStatus(req.body.orderStatus) || 'in-progress',
       caseType: req.body.caseType,
       ProjectManagmentFee: req.body.ProjectManagmentFee ?? 0,
       ProjectStartFee: req.body.ProjectStartFee ?? 0,
@@ -133,6 +124,13 @@ export const createOrder = async (req: Request, res: Response) => {
         return res.status(400).json({ message: parsed.error })
       }
       orderData.monthlyOrderStatus = parsed.value
+    }
+    if (!orderData.monthlyOrderStatus || Object.keys(orderData.monthlyOrderStatus).length === 0) {
+      const start = String(orderData.startDate || '').split('T')[0]
+      const monthKey = start.length >= 7 ? start.slice(0, 7) : ''
+      if (monthKey) {
+        orderData.monthlyOrderStatus = { [monthKey]: orderData.orderStatus }
+      }
     }
     if (req.body.managers) {
       if (Array.isArray(req.body.managers)) {
@@ -158,12 +156,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const incomingRates: Record<string, number> = (req.body.agentRates || req.body.agentPrices || {})
     const incomingAssignments: Array<any> = Array.isArray(req.body.agentAssignments) ? req.body.agentAssignments : []
 
-    const unionIds = new Set<string>([
-      ...assignedCallers.map(id => String(id)),
-      ...Object.keys(incomingGoals || {}),
-      ...Object.keys(incomingRates || {}),
-      ...incomingAssignments.map(a => String(a?.id)).filter(Boolean),
-    ])
+    const unionIds = new Set<string>(assignedCallers.map(id => String(id)))
 
     // helper to optionally lookup name later if needed
     const lookupNames = async (ids: string[]) => {
@@ -248,47 +241,7 @@ export const updateOrder = async (req: Request, res: Response) => {
   try {
     // Parse assignedCallers - handle both string and array formats (same logic as createOrder)
     if (updatedData.assignedCallers) {
-      let assignedCallers: Types.ObjectId[] = []
-      
-      if (typeof updatedData.assignedCallers === 'string') {
-        try {
-          // Parse the stringified JSON array
-          const parsedCallers = JSON.parse(updatedData.assignedCallers)
-          if (Array.isArray(parsedCallers)) {
-            // Extract ObjectIds from the parsed array
-            assignedCallers = parsedCallers
-              .map((caller: any) => {
-                if (typeof caller === 'string') {
-                  return new Types.ObjectId(caller)
-                } else if (caller && typeof caller === 'object' && caller.id) {
-                  return new Types.ObjectId(caller.id)
-                }
-                return null
-              })
-              .filter((id: Types.ObjectId | null) => id !== null) as Types.ObjectId[]
-          }
-        } catch (parseError) {
-          console.error('Error parsing assignedCallers:', parseError)
-          return res.status(400).json({
-            message: 'Invalid assignedCallers format. Expected array of agent IDs.'
-          })
-        }
-      } else if (Array.isArray(updatedData.assignedCallers)) {
-        // Handle direct array format
-        assignedCallers = updatedData.assignedCallers
-          .map((caller: any) => {
-            if (typeof caller === 'string') {
-              return new Types.ObjectId(caller)
-            } else if (caller && typeof caller === 'object' && caller.id) {
-              return new Types.ObjectId(caller.id)
-            }
-            return caller // Assume it's already an ObjectId
-          })
-          .filter((id: any) => id instanceof Types.ObjectId) as Types.ObjectId[]
-      }
-      
-      // Update the assignedCallers with properly converted ObjectIds
-      updatedData.assignedCallers = assignedCallers
+      updatedData.assignedCallers = parseAssignedCallers(updatedData.assignedCallers)
     }
 
     // Normalize managers in update payload
@@ -334,12 +287,7 @@ export const updateOrder = async (req: Request, res: Response) => {
           : (current?.assignedCallers || []).map((id: any) => String(id))
       )
 
-      const unionIds = new Set<string>([
-        ...assignedCallersIds,
-        ...Object.keys(incomingGoals || {}),
-        ...Object.keys(incomingRates || {}),
-        ...incomingAssignments.map(a => String(a?.id)).filter(Boolean),
-      ])
+      const unionIds = new Set<string>(assignedCallersIds)
 
       const lookupNames = async (ids: string[]) => {
         const userDocs = await gcAgent.find({ _id: { $in: ids.map(id => new Types.ObjectId(id)) } }).select('name firstName lastName').lean()
