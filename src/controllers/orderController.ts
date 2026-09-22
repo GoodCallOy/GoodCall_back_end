@@ -3,6 +3,8 @@ import { Types } from 'mongoose';
 import Order from '../models/orders'
 import User from '../models/user';
 import gcAgent from '../models/gcAgent';
+import DailyLog from '../models/dailyLog'
+import AgentGoals from '../models/agentGoals'
 import { parseMonthlyOrderStatus, normalizeOrderStatus } from '../utils/orderStatusHelpers';
 
 type AgentOrderRow = {
@@ -313,10 +315,29 @@ export const updateOrder = async (req: Request, res: Response) => {
       updatedData.agentRates = Object.fromEntries(normalizedAssignments.map((a: any) => [a.id, a.rate]))
     }
 
+    const existingOrder = await Order.findById(orderId).select('caseName')
     const updatedOrder = await Order.findByIdAndUpdate(orderId, updatedData, { new: true })
     if (!updatedOrder) {
       return res.status(404).json({ error: 'Order not found' })
     }
+
+    const oldName = String(existingOrder?.caseName || '').trim()
+    const newName = String(updatedOrder.caseName || '').trim()
+    if (newName && newName !== oldName) {
+      try {
+        await DailyLog.updateMany(
+          { order: updatedOrder._id },
+          { $set: { caseName: newName } }
+        )
+        await AgentGoals.updateMany(
+          { orderId: String(updatedOrder._id) },
+          { $set: { caseName: newName } }
+        )
+      } catch (cascadeErr) {
+        console.error('Error cascading campaign name change:', cascadeErr)
+      }
+    }
+
     res.status(200).json({ message: 'Order updated successfully', order: updatedOrder })
   } catch (err: any) {
     console.error('Error updating order:', err.message)
